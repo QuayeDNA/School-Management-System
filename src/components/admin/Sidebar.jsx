@@ -2,9 +2,8 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  FaHome, FaUsers, FaUserTie, FaMoneyBillWave, FaSignOutAlt, 
-  FaCreditCard, FaBook, FaEnvelope, FaChartBar, FaCog, 
-  FaCalculator, FaBoxes, FaBars
+  FaHome, FaUsers, FaUserTie, FaMoneyBillWave, FaSignOutAlt, FaBook, FaEnvelope, FaChartBar, FaCog, 
+  FaBoxes, FaBars
 } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-tooltip';
@@ -17,14 +16,13 @@ const Sidebar = ({ onToggle, expanded }) => {
     { to: "/app/admin/students", icon: <FaUsers />, text: "Student Management" },
     { to: "/app/admin/staff", icon: <FaUserTie />, text: "Employee Management" },
     { to: "/app/admin/payroll", icon: <FaMoneyBillWave />, text: "Payroll System" },
-    { to: "/app/admin/payroll", icon: <FaCreditCard />, text: "Payroll Portal" },
     { to: "/app/admin/transactions", icon: <FaMoneyBillWave />, text: "Transactions" },
+    { to: "/app/admin/inventory", icon: <FaBoxes />, text: "Sales and Inventory" },
     { to: "/app/admin/library", icon: <FaBook />, text: "E-Library" },
     { to: "/app/admin/messaging", icon: <FaEnvelope />, text: "Mass Messaging" },
     { to: "/app/admin/reports", icon: <FaChartBar />, text: "Reports" },
     { to: "/app/admin/settings", icon: <FaCog />, text: "Settings" },
-    { to: "/app/admin/calculator", icon: <FaCalculator />, text: "Calculator" },
-    { to: "/app/admin/inventory", icon: <FaBoxes />, text: "Sales and Inventory" },
+   
   ];
 
   return (

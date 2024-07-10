@@ -11,10 +11,18 @@ import AdminDashboard from '../../pages/admin/Dashboard';
 import Students from '../../pages/admin/Students';
 import Staff from '../../pages/admin/Staff';
 import Payroll from '../../pages/admin/Payroll';
+import Transactions from '../../pages/admin/Transactions'
+import SalesInventory from '../../pages/admin/SalesAndInventory';
+import ELibrary from '../../pages/admin/E-Library'
+import MassMessaging from '../../pages/admin/MassMessaging';
+import Reports from '../../pages/admin/Reports';
+import Settings from '../../pages/admin/Settings'
+
 import StudentDashboard from '../../pages/student/Dashboard';
 import StaffDashboard from '../../pages/staff/Dashboard';
 import NotFound from '../../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
+
 
 
 const AppRouter = () => {
@@ -33,6 +41,13 @@ const AppRouter = () => {
             <Route path="students" element={<Students />} />
             <Route path="staff" element={<Staff />} />
             <Route path="payroll" element={<Payroll />} />
+            <Route path="transactions" element={<Transactions />} />
+            <Route path="library" element={<ELibrary />} />
+            <Route path="messaging" element={<MassMessaging />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="inventory" element={<SalesInventory />} />
+            {/* Add more admin-specific routes here */}
           </Route>
 
           {/* Student routes */}

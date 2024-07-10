@@ -24,6 +24,7 @@ const EmployeeManagement = () => {
 
   const handleEditEmployee = (id) => {
     // Implement edit employee logic
+    
   };
 
   const handleDeleteEmployee = (id) => {
