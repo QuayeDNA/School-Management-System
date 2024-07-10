@@ -1,0 +1,60 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '../contexts/AuthContext';
+import AdminLayout from '../layouts/AdminLayout';
+import StudentLayout from '../layouts/StudentLayout';
+import StaffLayout from '../layouts/StaffLayout';
+import LandingPage from '../../pages/LandingPage';
+import AdminLogin from '../../pages/admin/AdminLogin';
+import StudentLogin from '../../pages/student/StudentLogin';
+import StaffLogin from '../../pages/staff/StaffLogin';
+import AdminDashboard from '../../pages/admin/Dashboard';
+import Students from '../../pages/admin/Students';
+import Staff from '../../pages/admin/Staff';
+import Payroll from '../../pages/admin/Payroll';
+import StudentDashboard from '../../pages/student/Dashboard';
+import StaffDashboard from '../../pages/staff/Dashboard';
+import NotFound from '../../pages/NotFound';
+import ProtectedRoute from './ProtectedRoute';
+
+
+const AppRouter = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/student-login" element={<StudentLogin />} />
+          <Route path="/staff-login" element={<StaffLogin />} />
+
+          {/* Admin routes */}
+          <Route path="/app/admin/*" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="students" element={<Students />} />
+            <Route path="staff" element={<Staff />} />
+            <Route path="payroll" element={<Payroll />} />
+          </Route>
+
+          {/* Student routes */}
+          <Route path="/app/student/*" element={<ProtectedRoute><StudentLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<StudentDashboard />} />
+            {/* Add more student-specific routes here */}
+          </Route>
+
+          {/* Staff routes */}
+          <Route path="/app/staff/*" element={<ProtectedRoute><StaffLayout /></ProtectedRoute>}>
+            <Route path="dashboard" element={<StaffDashboard />} />
+            {/* Add more staff-specific routes here */}
+          </Route>
+
+          {/* Not Found route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+};
+
+
+
+export default AppRouter;
