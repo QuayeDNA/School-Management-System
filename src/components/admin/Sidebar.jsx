@@ -1,9 +1,9 @@
 // src/components/admin/Sidebar.jsx
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  FaHome, FaUsers, FaUserTie, FaMoneyBillWave, FaSignOutAlt, FaBook, FaEnvelope, FaChartBar, FaCog, 
-  FaBoxes, FaBars
+import {
+  FaHome, FaUsers, FaUserTie, FaMoneyBillWave, FaSignOutAlt, FaBook, FaEnvelope, FaChartBar, FaCog,
+  FaBoxes, FaBars, FaBus
 } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-tooltip';
@@ -20,9 +20,10 @@ const Sidebar = ({ onToggle, expanded }) => {
     { to: "/app/admin/inventory", icon: <FaBoxes />, text: "Sales and Inventory" },
     { to: "/app/admin/library", icon: <FaBook />, text: "E-Library" },
     { to: "/app/admin/messaging", icon: <FaEnvelope />, text: "Mass Messaging" },
+    { to: "/app/admin/transportation", icon: <FaBus />, text: "Transportation" },
     { to: "/app/admin/reports", icon: <FaChartBar />, text: "Reports" },
     { to: "/app/admin/settings", icon: <FaCog />, text: "Settings" },
-   
+
   ];
 
   return (
@@ -39,20 +40,20 @@ const Sidebar = ({ onToggle, expanded }) => {
         ))}
       </nav>
       <div className="absolute bottom-0 w-full p-4">
-      <button
-  onClick={logout}
-  className="flex items-center text-white hover:text-gray-300 transition-colors w-full"
-  data-tooltip-id="sidebar-tooltip"
-  data-tooltip-content="Logout"
-  data-tooltip-place="right"
->
-  <FaSignOutAlt className="mr-2" />
-  <span className={expanded ? 'block' : 'hidden'}>Logout</span>
-</button>
+        <button
+          onClick={logout}
+          className="flex items-center text-white hover:text-gray-300 transition-colors w-full"
+          data-tooltip-id="sidebar-tooltip"
+          data-tooltip-content="Logout"
+          data-tooltip-place="right"
+        >
+          <FaSignOutAlt className="mr-2" />
+          <span className={expanded ? 'block' : 'hidden'}>Logout</span>
+        </button>
       </div>
-      <Tooltip 
-        id="sidebar-tooltip" 
-        place="right" 
+      <Tooltip
+        id="sidebar-tooltip"
+        place="right"
         className="z-[1000]"
         positionStrategy="fixed"
         offset={5}
@@ -62,17 +63,17 @@ const Sidebar = ({ onToggle, expanded }) => {
 };
 
 const SidebarLink = ({ to, icon, text, expanded }) => (
-    <Link
-      to={to}
-      className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-      data-tooltip-id="sidebar-tooltip"
-      data-tooltip-content={text}
-      data-tooltip-place="right"
-    >
-      {icon}
-      <span className={`ml-2 ${expanded ? 'block' : 'hidden'}`}>{text}</span>
-    </Link>
-  );
+  <Link
+    to={to}
+    className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+    data-tooltip-id="sidebar-tooltip"
+    data-tooltip-content={text}
+    data-tooltip-place="right"
+  >
+    {icon}
+    <span className={`ml-2 ${expanded ? 'block' : 'hidden'}`}>{text}</span>
+  </Link>
+);
 
 SidebarLink.propTypes = {
   to: PropTypes.string.isRequired,

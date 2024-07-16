@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { FiUser, FiBook, FiCalendar, FiMail, FiBell, FiShield } from 'react-icons/fi';
 import GeneralSettings from '../../components/admin/GeneralSettings';

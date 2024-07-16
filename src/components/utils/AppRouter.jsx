@@ -17,6 +17,7 @@ import ELibrary from '../../pages/admin/E-Library'
 import MassMessaging from '../../pages/admin/MassMessaging';
 import Reports from '../../pages/admin/Reports';
 import Settings from '../../pages/admin/Settings'
+import Transportation from '../../pages/admin/Transportation';
 
 import StudentDashboard from '../../pages/student/Dashboard';
 import StaffDashboard from '../../pages/staff/Dashboard';
@@ -47,6 +48,7 @@ const AppRouter = () => {
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
             <Route path="inventory" element={<SalesInventory />} />
+            <Route path="transportation" element={<Transportation />} />
             {/* Add more admin-specific routes here */}
           </Route>
 
