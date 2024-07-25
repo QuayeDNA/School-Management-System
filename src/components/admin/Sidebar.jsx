@@ -1,9 +1,8 @@
-// src/components/admin/Sidebar.jsx
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   FaHome, FaUsers, FaUserTie, FaMoneyBillWave, FaSignOutAlt, FaBook, FaEnvelope, FaChartBar, FaCog,
-  FaBoxes, FaBars, FaBus
+  FaBoxes, FaBars, FaBus, FaGraduationCap
 } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'react-tooltip';
@@ -21,9 +20,9 @@ const Sidebar = ({ onToggle, expanded }) => {
     { to: "/app/admin/library", icon: <FaBook />, text: "E-Library" },
     { to: "/app/admin/messaging", icon: <FaEnvelope />, text: "Mass Messaging" },
     { to: "/app/admin/transportation", icon: <FaBus />, text: "Transportation" },
+    { to: "/app/admin/academics", icon: <FaGraduationCap />, text: "Academics Management" },
     { to: "/app/admin/reports", icon: <FaChartBar />, text: "Reports" },
     { to: "/app/admin/settings", icon: <FaCog />, text: "Settings" },
-
   ];
 
   return (
@@ -34,7 +33,7 @@ const Sidebar = ({ onToggle, expanded }) => {
           <FaBars />
         </button>
       </div>
-      <nav className="mt-8">
+      <nav className="mt-8 max-h-[calc(100vh-12rem)] overflow-y-auto">
         {sidebarLinks.map((link, index) => (
           <SidebarLink key={index} to={link.to} icon={link.icon} text={link.text} expanded={expanded} />
         ))}
@@ -54,7 +53,7 @@ const Sidebar = ({ onToggle, expanded }) => {
       <Tooltip
         id="sidebar-tooltip"
         place="right"
-        className="z-[1000]"
+        className="z-10"
         positionStrategy="fixed"
         offset={5}
       />

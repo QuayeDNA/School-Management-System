@@ -5,6 +5,7 @@ import StudentLayout from '../layouts/StudentLayout';
 import StaffLayout from '../layouts/StaffLayout';
 import LandingPage from '../../pages/LandingPage';
 import AdminLogin from '../../pages/admin/AdminLogin';
+import AcademicsManagement from '../../pages/admin/Academics';
 import StudentLogin from '../../pages/student/StudentLogin';
 import StaffLogin from '../../pages/staff/StaffLogin';
 import AdminDashboard from '../../pages/admin/Dashboard';
@@ -41,6 +42,7 @@ const AppRouter = () => {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="students" element={<Students />} />
             <Route path="staff" element={<Staff />} />
+            <Route path="academics" element={<AcademicsManagement />} />
             <Route path="payroll" element={<Payroll />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="library" element={<ELibrary />} />

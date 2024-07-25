@@ -7,6 +7,7 @@ import ExportDataButton from '../../components/admin/studentManagement/ExportDat
 import FilterDropdown from '../../components/admin/studentManagement/FilterDropDown';
 import GradeCard from '../../components/admin/studentManagement/GradeCard';
 import { FaArrowLeft } from 'react-icons/fa';
+import { generateSampleStudents } from '../../components/utils/generateStudents'; // Import the utility function
 
 const GRADES = [
   'Creche', 'Nursery 1', 'Nursery 2', 'KG 1', 'KG 2',
@@ -20,44 +21,7 @@ const StudentManagement = () => {
   const [currentStudent, setCurrentStudent] = useState(null);
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [showGradeCards, setShowGradeCards] = useState(true);
-  const [students, setStudents] = useState([
-    {
-      "name": "John Doe",
-      "dateOfBirth": "2010-02-16",
-      "gender": "Male",
-      "address": "1234 Elm St",
-      "contactNumber": "123-456-7890",
-      "email": "johndoe@example.com",
-      "guardianName": "Jane Doe",
-      "guardianContact": "987-654-3210",
-      "grade": "Primary 3",
-      "status": "Active"
-    },
-    {
-      "name": "Jane Smith",
-      "dateOfBirth": "2012-05-21",
-      "gender": "Female",
-      "address": "5678 Oak St",
-      "contactNumber": "234-567-8901",
-      "email": "janesmith@example.com",
-      "guardianName": "John Smith",
-      "guardianContact": "876-543-2109",
-      "grade": "JHS 1",
-      "status": "Inactive"
-    },
-    {
-      "name": "Michael Johnson",
-      "dateOfBirth": "2015-09-12",
-      "gender": "Male",
-      "address": "9012 Pine St",
-      "contactNumber": "345-678-9012",
-      "email": "michaeljohnson@example.com",
-      "guardianName": "Emily Johnson",
-      "guardianContact": "765-432-1098",
-      "grade": "JHS 3",
-      "status": "Active"
-    }
-  ]);
+  const [students, setStudents] = useState(generateSampleStudents(50)); // Use the generated data
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
