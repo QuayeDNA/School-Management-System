@@ -1,28 +1,28 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '../contexts/AuthContext';
-import AdminLayout from '../layouts/AdminLayout';
-import StudentLayout from '../layouts/StudentLayout';
-import StaffLayout from '../layouts/StaffLayout';
-import LandingPage from '../../pages/LandingPage';
-import AdminLogin from '../../pages/admin/AdminLogin';
-import AcademicsManagement from '../../pages/admin/Academics';
-import StudentLogin from '../../pages/student/StudentLogin';
-import StaffLogin from '../../pages/staff/StaffLogin';
-import AdminDashboard from '../../pages/admin/Dashboard';
-import Students from '../../pages/admin/Students';
-import Staff from '../../pages/admin/Staff';
-import Payroll from '../../pages/admin/Payroll';
-import Transactions from '../../pages/admin/Transactions'
-import SalesInventory from '../../pages/admin/SalesAndInventory';
-import ELibrary from '../../pages/admin/E-Library'
-import MassMessaging from '../../pages/admin/MassMessaging';
-import Reports from '../../pages/admin/Reports';
-import Settings from '../../pages/admin/Settings'
-import Transportation from '../../pages/admin/Transportation';
+import { AuthProvider } from '../components/contexts/AuthContext';
+import AdminLayout from '../components/layouts/AdminLayout';
+import StudentLayout from '../components/layouts/StudentLayout';
+import StaffLayout from '../components/layouts/StaffLayout';
+import LandingPage from '../pages/LandingPage';
+import AdminLogin from '../pages/admin/AdminLogin';
+import AcademicsManagement from '../pages/admin/Academics';
+import StudentLogin from '../pages/student/StudentLogin';
+import StaffLogin from '../pages/staff/StaffLogin';
+import AdminDashboard from '../pages/admin/Dashboard';
+import Students from '../pages/admin/Students';
+import Staff from '../pages/admin/Staff';
+import Payroll from '../pages/admin/Payroll';
+import Transactions from '../pages/admin/Transactions'
+import SalesInventory from '../pages/admin/SalesAndInventory';
+import ELibrary from '../pages/admin/E-Library'
+import MassMessaging from '../pages/admin/MassMessaging';
+import Reports from '../pages/admin/Reports';
+import Settings from '../pages/admin/Settings'
+import Transportation from '../pages/admin/Transportation';
 
-import StudentDashboard from '../../pages/student/Dashboard';
-import StaffDashboard from '../../pages/staff/Dashboard';
-import NotFound from '../../pages/NotFound';
+import StudentDashboard from '../pages/student/Dashboard';
+import StaffDashboard from '../pages/staff/Dashboard';
+import NotFound from '../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
 
 
