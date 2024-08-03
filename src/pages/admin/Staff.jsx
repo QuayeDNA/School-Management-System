@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Tab, Menu, Transition } from '@headlessui/react';
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaFileExport, FaFilter, FaEllipsisV, FaUserTie, FaChalkboardTeacher, FaBroom, FaUserGraduate } from 'react-icons/fa';
+import AddStaffModal from '../../components/admin/StaffManagement/AddStaffModal';
 import PropTypes from 'prop-types';
 
 const EmployeeManagement = () => {
@@ -10,30 +11,50 @@ const EmployeeManagement = () => {
     { id: 2, name: 'Jane Smith', role: 'Admin', department: 'Administration', status: 'Full-time' },
     { id: 3, name: 'Mike Johnson', role: 'Janitor', department: 'Maintenance', status: 'Part-time' },
     { id: 4, name: 'Emily Brown', role: 'Intern', department: 'IT', status: 'Temporary' },
-    // Add more mock data as needed
   ]);
+  const [selectedDepartment, setSelectedDepartment] = useState('All');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const handleSearch = (e) => {
+  const handleSearch = useCallback((e) => {
     setSearchTerm(e.target.value);
-    // Implement search logic here
+  }, []);
+
+ const handleAddEmployee = (employeeData) => {
+    // Logic to add the new employee to your state or send to an API
+    console.log('New employee data:', employeeData);
+    // Close the modal after saving
+    setIsAddModalOpen(false);
   };
 
-  const handleAddEmployee = () => {
-    // Implement add employee logic
-  };
-
-  const handleEditEmployee = (id) => {
+  const handleEditEmployee = useCallback((id) => {
     // Implement edit employee logic
-    
-  };
+    console.log('Edit employee', id);
+  }, []);
 
-  const handleDeleteEmployee = (id) => {
+  const handleDeleteEmployee = useCallback((id) => {
     // Implement delete employee logic
-  };
+    setEmployees(prevEmployees => prevEmployees.filter(emp => emp.id !== id));
+  }, []);
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     // Implement export logic
-  };
+    console.log('Export data');
+  }, []);
+
+  const handleDepartmentChange = useCallback((e) => {
+    setSelectedDepartment(e.target.value);
+  }, []);
+
+  const filteredEmployees = useMemo(() => {
+    return employees.filter(employee => 
+      (selectedDepartment === 'All' || employee.department === selectedDepartment) &&
+      (employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       employee.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       employee.department.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  }, [employees, selectedDepartment, searchTerm]);
+
+  const departments = useMemo(() => ['All', ...new Set(employees.map(emp => emp.department))], [employees]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -51,11 +72,16 @@ const EmployeeManagement = () => {
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
         <button
-          onClick={handleAddEmployee}
+          onClick={() => setIsAddModalOpen(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600 transition-colors"
         >
           <FaPlus className="mr-2" /> Add Employee
         </button>
+        <AddStaffModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddEmployee}
+      />
       </div>
 
       <Tab.Group>
@@ -74,19 +100,19 @@ const EmployeeManagement = () => {
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
-            <EmployeeTable employees={employees} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
+            <EmployeeTable employees={filteredEmployees} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
           </Tab.Panel>
           <Tab.Panel>
-            <EmployeeTable employees={employees.filter(e => e.role === 'Teacher')} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
+            <EmployeeTable employees={filteredEmployees.filter(e => e.role === 'Teacher')} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
           </Tab.Panel>
           <Tab.Panel>
-            <EmployeeTable employees={employees.filter(e => e.role === 'Admin')} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
+            <EmployeeTable employees={filteredEmployees.filter(e => e.role === 'Admin')} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
           </Tab.Panel>
           <Tab.Panel>
-            <EmployeeTable employees={employees.filter(e => ['Janitor', 'Cook'].includes(e.role))} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
+            <EmployeeTable employees={filteredEmployees.filter(e => ['Janitor', 'Cook'].includes(e.role))} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
           </Tab.Panel>
           <Tab.Panel>
-            <EmployeeTable employees={employees.filter(e => ['Intern', 'TA'].includes(e.role))} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
+            <EmployeeTable employees={filteredEmployees.filter(e => ['Intern', 'TA'].includes(e.role))} onEdit={handleEditEmployee} onDelete={handleDeleteEmployee} />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
@@ -100,12 +126,14 @@ const EmployeeManagement = () => {
         </button>
         <div className="flex items-center">
           <FaFilter className="mr-2 text-gray-500" />
-          <select className="border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option>Filter by Department</option>
-            <option>Mathematics</option>
-            <option>Science</option>
-            <option>Administration</option>
-            <option>Maintenance</option>
+          <select 
+            className="border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedDepartment}
+            onChange={handleDepartmentChange}
+          >
+            {departments.map(dept => (
+              <option key={dept} value={dept}>{dept}</option>
+            ))}
           </select>
         </div>
       </div>
@@ -197,8 +225,6 @@ const EmployeeTable = ({ employees, onEdit, onDelete }) => (
   </div>
 );
 
-
-
 const EmployeeIcon = ({ role }) => {
   switch (role) {
     case 'Teacher':
@@ -233,11 +259,10 @@ EmployeeIcon.propTypes = {
   role: PropTypes.string.isRequired
 };
 
-
 EmployeeTable.propTypes = {
   employees: PropTypes.array.isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired
 };
 
-export default EmployeeManagement;
+export default EmployeeManagement;  
