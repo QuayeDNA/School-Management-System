@@ -1,52 +1,88 @@
 import { useState } from 'react';
-import { FaBell, FaEnvelope, FaUser } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { FaBell, FaEnvelope, FaUserCircle } from 'react-icons/fa';
+import { Transition } from '@headlessui/react';
+import PropTypes from 'prop-types';
 
 const Header = () => {
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showMessages, setShowMessages] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
-  const toggleDropdown = (setter) => {
-    setter(prev => !prev);
+  const toggleDropdown = (dropdown) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  };
+
+  const DropdownMenu = ({ children }) => (
+    <Transition
+      show={!!activeDropdown}
+      enter="transition ease-out duration-100"
+      enterFrom="transform opacity-0 scale-95"
+      enterTo="transform opacity-100 scale-100"
+      leave="transition ease-in duration-75"
+      leaveFrom="transform opacity-100 scale-100"
+      leaveTo="transform opacity-0 scale-95"
+    >
+      <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+          {children}
+        </div>
+      </div>
+    </Transition>
+  );
+
+  DropdownMenu.propTypes = {
+    children: PropTypes.node.isRequired,
   };
 
   return (
-    <header className="bg-white shadow-sm w-full">
-      <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <h3 className="text-xl font-semibold text-gray-900">Dashboard App</h3>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <button onClick={() => toggleDropdown(setShowNotifications)} className="text-gray-500 hover:text-gray-700">
-              <FaBell size={20} />
-            </button>
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notification 1</a>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notification 2</a>
-              </div>
-            )}
+    <header className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center">
+            <h1 className="text-2xl font-bold text-white">EduManage</h1>
           </div>
-          <div className="relative">
-            <button onClick={() => toggleDropdown(setShowMessages)} className="text-gray-500 hover:text-gray-700">
-              <FaEnvelope size={20} />
-            </button>
-            {showMessages && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Message 1</a>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Message 2</a>
-              </div>
-            )}
-          </div>
-          <div className="relative">
-            <button onClick={() => toggleDropdown(setShowProfile)} className="text-gray-500 hover:text-gray-700">
-              <FaUser size={20} />
-            </button>
-            {showProfile && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-              </div>
-            )}
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <button
+                onClick={() => toggleDropdown('notifications')}
+                className="text-white hover:text-blue-200 focus:outline-none"
+              >
+                <FaBell className="h-6 w-6" />
+              </button>
+              {activeDropdown === 'notifications' && (
+                <DropdownMenu>
+                  <Link to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notification 1</Link>
+                  <Link to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notification 2</Link>
+                </DropdownMenu>
+              )}
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => toggleDropdown('messages')}
+                className="text-white hover:text-blue-200 focus:outline-none"
+              >
+                <FaEnvelope className="h-6 w-6" />
+              </button>
+              {activeDropdown === 'messages' && (
+                <DropdownMenu>
+                  <Link to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Message 1</Link>
+                  <Link to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Message 2</Link>
+                </DropdownMenu>
+              )}
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => toggleDropdown('profile')}
+                className="text-white hover:text-blue-200 focus:outline-none"
+              >
+                <FaUserCircle className="h-6 w-6" />
+              </button>
+              {activeDropdown === 'profile' && (
+                <DropdownMenu>
+                  <Link to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</Link>
+                  <Link to="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
         </div>
       </div>

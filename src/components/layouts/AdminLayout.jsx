@@ -33,7 +33,7 @@ const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar onToggle={handleSidebarToggle} expanded={sidebarExpanded} />
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${sidebarExpanded ? 'ml-64' : 'ml-14'}`}>
+      <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 mt-2">
           <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

@@ -8,6 +8,7 @@ import NotFound from '../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
 import Loading from '../components/LoadingPage';
 import ComingSoon from '../components/ComingSoon';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 // Lazy load admin components
 const AdminDashboard = lazy(() => import('../pages/admin/Dashboard'));
@@ -25,6 +26,7 @@ const Transportation = lazy(() => import('../pages/admin/Transportation'));
 
 const AppRouter = () => {
   return (
+    <ErrorBoundary>
     <AuthProvider>
       <Router>
         <Suspense fallback={<Loading />}>
@@ -62,6 +64,7 @@ const AppRouter = () => {
         </Suspense>
       </Router>
     </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

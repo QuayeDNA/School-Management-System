@@ -7,14 +7,14 @@ import { FaTimes, FaUserGraduate } from 'react-icons/fa';
 import { Fragment } from 'react';
 
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  dateOfBirth: yup.date().required('Date of Birth is required'),
+  name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
+  dateOfBirth: yup.date().required('Date of Birth is required').max(new Date(), 'Date of Birth cannot be in the future'),
   gender: yup.string().required('Gender is required'),
-  address: yup.string().required('Address is required'),
-  contactNumber: yup.string().required('Contact Number is required'),
+  address: yup.string().required('Address is required').min(5, 'Address must be at least 5 characters'),
+  contactNumber: yup.string().required('Contact Number is required').matches(/^[0-9]+$/, 'Contact Number must be numeric').min(10, 'Contact Number must be at least 10 digits'),
   email: yup.string().email('Invalid email format').required('Email is required'),
-  guardianName: yup.string().required('Guardian Name is required'),
-  guardianContact: yup.string().required('Guardian Contact is required'),
+  guardianName: yup.string().required('Guardian Name is required').min(2, 'Guardian Name must be at least 2 characters'),
+  guardianContact: yup.string().required('Guardian Contact is required').matches(/^[0-9]+$/, 'Guardian Contact must be numeric').min(10, 'Guardian Contact must be at least 10 digits'),
   grade: yup.string().required('Grade is required'),
   status: yup.string().required('Status is required'),
 });
@@ -138,7 +138,7 @@ const InputField = ({ name, label, control, errors, type = "text" }) => (
         <input
           {...field}
           type={type}
-          className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 ${errors[name] ? 'border-red-300' : ''}`}
+          className={`mt-1 block w-full rounded-md p-2 border-2 border-gray-200 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 ${errors[name] ? 'border-red-300' : ''}`}
         />
       )}
     />
