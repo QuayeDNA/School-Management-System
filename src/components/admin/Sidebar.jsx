@@ -14,10 +14,11 @@ import {
   FaGraduationCap,
   FaSignOutAlt,
   FaBars,
+  FaTimes,
 } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 
-const Sidebar = ({ expanded, onToggle }) => {
+const Sidebar = ({ expanded, onToggle, isVisible }) => {
   const { logout } = useAuth();
 
   const sidebarLinks = [
@@ -35,9 +36,11 @@ const Sidebar = ({ expanded, onToggle }) => {
     { to: "/app/admin/settings", icon: FaCog, text: "Settings" },
   ];
 
+  if (!isVisible) return null;
+
   return (
     <div
-      className={`bg-gradient-to-b from-blue-600 to-purple-700 text-white h-screen ${
+      className={`bg-gradient-to-b from-blue-600 to-purple-700 text-white h-screen fixed top-0 left-0 z-50 ${
         expanded ? 'w-64' : 'w-20'
       } transition-all duration-300 ease-in-out`}
     >
@@ -47,7 +50,7 @@ const Sidebar = ({ expanded, onToggle }) => {
           onClick={onToggle}
           className="text-white focus:outline-none"
         >
-          <FaBars className="w-6 h-6" />
+          {expanded ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
         </button>
       </div>
       <nav className="mt-8 overflow-y-auto h-[calc(100vh-12rem)]">
@@ -85,6 +88,7 @@ const Sidebar = ({ expanded, onToggle }) => {
 Sidebar.propTypes = {
   expanded: PropTypes.bool.isRequired,
   onToggle: PropTypes.func.isRequired,
+  isVisible: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

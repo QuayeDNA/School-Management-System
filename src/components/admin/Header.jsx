@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBell, FaEnvelope, FaUserCircle } from 'react-icons/fa';
+import { FaBell, FaEnvelope, FaUserCircle, FaBars } from 'react-icons/fa';
 import { Transition } from '@headlessui/react';
 import PropTypes from 'prop-types';
 
-const Header = () => {
+const Header = ({ onMenuClick }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const toggleDropdown = (dropdown) => {
@@ -38,6 +38,12 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
+            <button
+              onClick={onMenuClick}
+              className="text-white mr-4 focus:outline-none md:hidden"
+            >
+              <FaBars className="h-6 w-6" />
+            </button>
             <h1 className="text-2xl font-bold text-white">EduManage</h1>
           </div>
           <div className="flex items-center space-x-4">
@@ -88,6 +94,10 @@ const Header = () => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  onMenuClick: PropTypes.func.isRequired,
 };
 
 export default Header;
