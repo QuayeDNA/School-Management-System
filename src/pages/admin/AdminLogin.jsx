@@ -78,9 +78,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500 p-4">
+    <div className="min-h-screen flex items-center justify-center  bg-gradient-to-br from-teal-700 to-green-600  p-4">
       <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-600 to-teal-700"></div>
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Welcome Back
@@ -187,7 +187,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-green-600 to-teal-700 hover:from-green-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
             >
               {loading ? (
                 <span className="flex items-center">

@@ -3,7 +3,7 @@ import { FaSpinner, FaCog, FaRocket } from 'react-icons/fa';
 
 const Loading = () => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500 bg-opacity-75 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-teal-400 to-green-500 bg-opacity-75 z-50">
       <Transition
         show={true}
         enter="transition-opacity duration-300"

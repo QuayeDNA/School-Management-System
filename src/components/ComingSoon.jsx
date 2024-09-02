@@ -3,7 +3,7 @@ import { FaTools, FaRocket, FaCog } from 'react-icons/fa';
 
 const ComingSoon = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-700 to-green-600 relative overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://picsum.photos/id/180/1920/1080')"}}></div>
       <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="bg-white bg-opacity-90 p-12 rounded-lg shadow-2xl text-center relative z-10 max-w-md w-full">

@@ -328,7 +328,7 @@ const QuickActionCard = ({ title, description, icon, link, image }) => (
       <div className="m-auto ">
         <Link 
           to={link}
-          className="inline-block text-xs bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition-colors duration-200"
+          className="inline-block text-xs bg-teal-600 text-white p-3 rounded-md hover:bg-blue-600 transition-colors duration-200"
         >
           Go to {title}
         </Link>
