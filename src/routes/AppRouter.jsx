@@ -35,8 +35,8 @@ const AppRouter = () => {
             <Route path="/admin-login" element={<AdminLogin />} />
             
             {/* Student and Staff login routes now lead to ComingSoon */}
-            <Route path="/student-login" element={<ComingSoon />} />
-            <Route path="/staff-login" element={<ComingSoon />} />
+            <Route path="/learner-login" element={<ComingSoon />} />
+            <Route path="/educator-login" element={<ComingSoon />} />
 
             {/* Admin routes */}
             <Route path="/app/admin/*" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>

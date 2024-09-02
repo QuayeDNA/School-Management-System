@@ -13,10 +13,10 @@ const LandingPage = () => {
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">I Am Blessed Montessori School</div>
               <div className="hidden md:flex space-x-6">
-                <a href="#" className="hover:text-teal-300 transition-colors">Home</a>
-                <a href="#" className="hover:text-teal-300 transition-colors">Programs</a>
-                <a href="#" className="hover:text-teal-300 transition-colors">About Us</a>
-                <a href="#" className="hover:text-teal-300 transition-colors">Contact</a>
+                <Link to="/" className="hover:text-teal-300 transition-colors">Home</Link>
+                <Link to="/programs" className="hover:text-teal-300 transition-colors">Programs</Link>
+                <Link to="/about" className="hover:text-teal-300 transition-colors">About Us</Link>
+                <Link to="/contact" className="hover:text-teal-300 transition-colors">Contact</Link>
               </div>
               <MobileMenu />
             </div>
@@ -178,50 +178,46 @@ const MobileMenu = () => {
         <div className="py-1">
           <MenuItem>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={`${
                   active ? 'bg-teal-500 text-white' : 'text-gray-700'
                 } block px-4 py-2 text-sm transition-colors`}
               >
                 Home
-              </a>
+              </button>
             )}
           </MenuItem>
           <MenuItem>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={`${
                   active ? 'bg-teal-500 text-white' : 'text-gray-700'
                 } block px-4 py-2 text-sm transition-colors`}
               >
                 Programs
-              </a>
+              </button>
             )}
           </MenuItem>
           <MenuItem>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={`${
                   active ? 'bg-teal-500 text-white' : 'text-gray-700'
                 } block px-4 py-2 text-sm transition-colors`}
               >
                 About Us
-              </a>
+              </button>
             )}
           </MenuItem>
           <MenuItem>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={`${
                   active ? 'bg-teal-500 text-white' : 'text-gray-700'
                 } block px-4 py-2 text-sm transition-colors`}
               >
                 Contact
-              </a>
+              </button>
             )}
           </MenuItem>
         </div>
