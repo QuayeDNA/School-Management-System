@@ -210,7 +210,7 @@ const PayrollTable = ({ employees, setSelectedEmployee, setActiveModal }) => (
             <td className="py-2 px-4 border-b">{employee.name}</td>
             <td className="py-2 px-4 border-b">{employee.role}</td>
             <td className="py-2 px-4 border-b">
-              ${employee.salary.toLocaleString()}
+            ₵{employee.salary.toLocaleString()}
             </td>
             <td className="py-2 px-4 border-b">{employee.lastPayment}</td>
             <td className="py-2 px-4 border-b">{employee.nextPayment}</td>

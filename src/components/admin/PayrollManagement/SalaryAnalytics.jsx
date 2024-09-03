@@ -29,7 +29,7 @@ const SalaryAnalytics = () => {
             {salaryData.map((data, index) => (
               <tr key={index} className="border-b">
                 <td className="py-2 px-4">{data.role}</td>
-                <td className="py-2 px-4">${data.averageSalary.toLocaleString()}</td>
+                <td className="py-2 px-4">₵{data.averageSalary.toLocaleString()}</td>
                 <td className="py-2 px-4">{data.employeeCount}</td>
               </tr>
             ))}
