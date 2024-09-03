@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { Tab } from '@headlessui/react';
-import { FaMoneyBillWave, FaChartLine, FaFileInvoiceDollar, FaHistory, FaCog, FaSearch, FaPlus, FaFileExport } from 'react-icons/fa';
+import React, { useState } from "react";
+import { Tab } from "@headlessui/react";
+import {
+  FaMoneyBillWave,
+  FaChartLine,
+  FaFileInvoiceDollar,
+  FaHistory,
+  FaCog,
+  FaSearch,
+  FaPlus,
+  FaFileExport,
+} from "react-icons/fa";
 
 const TransactionsPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    // Implement search logic here
+    // Implement search logic here₵
   };
 
   return (
@@ -15,9 +24,21 @@ const TransactionsPage = () => {
       <h1 className="text-3xl font-bold mb-6">Financial Transactions</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <FinancialCard title="Total Income" amount="$250,000" icon={<FaMoneyBillWave className="text-green-500" />} />
-        <FinancialCard title="Total Expenses" amount="$180,000" icon={<FaMoneyBillWave className="text-red-500" />} />
-        <FinancialCard title="Current Balance" amount="$70,000" icon={<FaMoneyBillWave className="text-blue-500" />} />
+        <FinancialCard
+          title="Total Income"
+          amount="₵250,000"
+          icon={<FaMoneyBillWave className="text-green-500" />}
+        />
+        <FinancialCard
+          title="Total Expenses"
+          amount="₵180,000"
+          icon={<FaMoneyBillWave className="text-red-500" />}
+        />
+        <FinancialCard
+          title="Current Balance"
+          amount="₵70,000"
+          icon={<FaMoneyBillWave className="text-blue-500" />}
+        />
       </div>
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -43,26 +64,51 @@ const TransactionsPage = () => {
 
       <Tab.Group>
         <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6 overflow-x-auto">
-          {['Overview', 'Income', 'Expenses', 'Invoices', 'History', 'Budget', 'Settings'].map((category) => (
+          {[
+            "Overview",
+            "Income",
+            "Expenses",
+            "Invoices",
+            "History",
+            "Budget",
+            "Settings",
+          ].map((category) => (
             <Tab
               key={category}
               className={({ selected }) =>
                 `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700 whitespace-nowrap
-                ${selected ? 'bg-white shadow' : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'}`
-              }
-            >
+                ${
+                  selected
+                    ? "bg-white shadow"
+                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                }`
+              }>
               {category}
             </Tab>
           ))}
         </Tab.List>
         <Tab.Panels>
-          <Tab.Panel><OverviewPanel /></Tab.Panel>
-          <Tab.Panel><IncomePanel /></Tab.Panel>
-          <Tab.Panel><ExpensesPanel /></Tab.Panel>
-          <Tab.Panel><InvoicesPanel /></Tab.Panel>
-          <Tab.Panel><HistoryPanel /></Tab.Panel>
-          <Tab.Panel><BudgetPanel /></Tab.Panel>
-          <Tab.Panel><SettingsPanel /></Tab.Panel>
+          <Tab.Panel>
+            <OverviewPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <IncomePanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ExpensesPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <InvoicesPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <HistoryPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <BudgetPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <SettingsPanel />
+          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>

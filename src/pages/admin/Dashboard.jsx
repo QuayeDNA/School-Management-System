@@ -162,7 +162,7 @@ const Dashboard = () => {
           <StatCard
             icon={<FaMoneyBillWave />}
             title="Monthly Revenue"
-            value="$50,000"
+            value="₵50,000"
             bgColor="bg-gradient-to-br from-yellow-400 to-yellow-600"
             link="/finance"
           />
@@ -326,10 +326,9 @@ const QuickActionCard = ({ title, description, icon, link, image }) => (
       </div>
       <p className="text-gray-600 mb-4 flex-grow">{description}</p>
       <div className="m-auto ">
-        <Link 
+        <Link
           to={link}
-          className="inline-block text-xs bg-teal-600 text-white p-3 rounded-md hover:bg-blue-600 transition-colors duration-200"
-        >
+          className="inline-block text-xs bg-teal-600 text-white p-3 rounded-md hover:bg-blue-600 transition-colors duration-200">
           Go to {title}
         </Link>
       </div>

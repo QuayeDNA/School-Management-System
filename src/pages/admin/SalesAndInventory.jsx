@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
-import { Tab } from '@headlessui/react';
-import { FaShoppingCart, FaBoxes, FaChartLine, FaTags, FaClipboardList, FaExchangeAlt, FaCog, FaSearch, FaPlus, FaFileExport } from 'react-icons/fa';
-import PropTypes from 'prop-types'
+import React, { useState } from "react";
+import { Tab } from "@headlessui/react";
+import {
+  FaShoppingCart,
+  FaBoxes,
+  FaChartLine,
+  FaTags,
+  FaClipboardList,
+  FaExchangeAlt,
+  FaCog,
+  FaSearch,
+  FaPlus,
+  FaFileExport,
+} from "react-icons/fa";
+import PropTypes from "prop-types";
 
 const SalesAndInventoryPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -13,12 +24,26 @@ const SalesAndInventoryPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Sales and Inventory Management</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        Sales and Inventory Management
+      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <SummaryCard title="Total Sales" amount="$120,000" icon={<FaShoppingCart className="text-green-500" />} />
-        <SummaryCard title="Total Inventory Value" amount="$500,000" icon={<FaBoxes className="text-blue-500" />} />
-        <SummaryCard title="Low Stock Items" amount="15" icon={<FaTags className="text-yellow-500" />} />
+        <SummaryCard
+          title="Total Sales"
+          amount="₵120,000"
+          icon={<FaShoppingCart className="text-green-500" />}
+        />
+        <SummaryCard
+          title="Total Inventory Value"
+          amount="₵500,000"
+          icon={<FaBoxes className="text-blue-500" />}
+        />
+        <SummaryCard
+          title="Low Stock Items"
+          amount="15"
+          icon={<FaTags className="text-yellow-500" />}
+        />
       </div>
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -44,26 +69,51 @@ const SalesAndInventoryPage = () => {
 
       <Tab.Group>
         <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6 overflow-x-auto">
-          {['Overview', 'Sales', 'Inventory', 'Products', 'Orders', 'Restocking', 'Settings'].map((category) => (
+          {[
+            "Overview",
+            "Sales",
+            "Inventory",
+            "Products",
+            "Orders",
+            "Restocking",
+            "Settings",
+          ].map((category) => (
             <Tab
               key={category}
               className={({ selected }) =>
                 `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700 whitespace-nowrap
-                ${selected ? 'bg-white shadow' : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'}`
-              }
-            >
+                ${
+                  selected
+                    ? "bg-white shadow"
+                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                }`
+              }>
               {category}
             </Tab>
           ))}
         </Tab.List>
         <Tab.Panels>
-          <Tab.Panel><OverviewPanel /></Tab.Panel>
-          <Tab.Panel><SalesPanel /></Tab.Panel>
-          <Tab.Panel><InventoryPanel /></Tab.Panel>
-          <Tab.Panel><ProductsPanel /></Tab.Panel>
-          <Tab.Panel><OrdersPanel /></Tab.Panel>
-          <Tab.Panel><RestockingPanel /></Tab.Panel>
-          <Tab.Panel><SettingsPanel /></Tab.Panel>
+          <Tab.Panel>
+            <OverviewPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <SalesPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <InventoryPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ProductsPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <OrdersPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <RestockingPanel />
+          </Tab.Panel>
+          <Tab.Panel>
+            <SettingsPanel />
+          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>
@@ -138,7 +188,7 @@ const SettingsPanel = () => (
 SummaryCard.propTypes = {
   title: PropTypes.string.isRequired,
   amount: PropTypes.string.isRequired,
-  icon: PropTypes.node.isRequired
+  icon: PropTypes.node.isRequired,
 };
 
 export default SalesAndInventoryPage;
