@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import db from '../../db/db';
 
 const AuthContext = createContext();
 
@@ -19,17 +20,26 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = useCallback((user) => {
-    setCurrentUser(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-  }, [setCurrentUser]);
+  const signUp = useCallback(async (username, email, password) => {
+    await db.users.add({ username, email, password });
+  }, []);
+
+  const login = useCallback(async (username, password) => {
+    const user = await db.users.get({ username, password });
+    if (user) {
+      setCurrentUser(user);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } else {
+      throw new Error('Invalid username or password');
+    }
+  }, []);
 
   const logout = useCallback(() => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
-  }, [setCurrentUser]);
+  }, []);
 
-  const contextValue = useMemo(() => ({ currentUser, login, logout, loading }), [currentUser, login, logout, loading]);
+  const contextValue = useMemo(() => ({ currentUser, signUp, login, logout, loading }), [currentUser, signUp, login, logout, loading]);
 
   if (loading) {
     return <div>Loading...</div>;

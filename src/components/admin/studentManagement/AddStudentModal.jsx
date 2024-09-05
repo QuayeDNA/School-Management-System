@@ -7,16 +7,29 @@ import { FaTimes, FaUserGraduate } from 'react-icons/fa';
 import { Fragment } from 'react';
 
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
-  dateOfBirth: yup.date().required('Date of Birth is required').max(new Date(), 'Date of Birth cannot be in the future'),
-  gender: yup.string().required('Gender is required'),
-  address: yup.string().required('Address is required').min(5, 'Address must be at least 5 characters'),
-  contactNumber: yup.string().required('Contact Number is required').matches(/^[0-9]+$/, 'Contact Number must be numeric').min(10, 'Contact Number must be at least 10 digits'),
+  name: yup.string()
+    .required('Name is required')
+    .min(3, 'Name must be at least 3 characters')
+    .max(50, 'Name must be at most 50 characters')
+    .matches(/^\S.*$/, 'Name cannot consist solely of whitespace characters'),
+  dateOfBirth: yup.date().required('Date of Birth is required').max(new Date(), 'Date of Birth cannot be in the future').test('age', 'Student must be at least 3 years old', value => {
+    const today = new Date();
+    const birthDate = new Date(value);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    return age >= 3;
+  }),
+  gender: yup.string().required('Gender is required').oneOf(['Male', 'Female', 'Other'], 'Invalid gender'),
+  address: yup.string().required('Address is required').min(10, 'Address must be at least 10 characters').max(100, 'Address must be at most 100 characters'),
+  contactNumber: yup.string().required('Contact Number is required').matches(/^[0-9]{10}$/, 'Contact Number must be exactly 10 digits'),
   email: yup.string().email('Invalid email format').required('Email is required'),
-  guardianName: yup.string().required('Guardian Name is required').min(2, 'Guardian Name must be at least 2 characters'),
-  guardianContact: yup.string().required('Guardian Contact is required').matches(/^[0-9]+$/, 'Guardian Contact must be numeric').min(10, 'Guardian Contact must be at least 10 digits'),
-  grade: yup.string().required('Grade is required'),
-  status: yup.string().required('Status is required'),
+  guardianName: yup.string().required('Guardian Name is required').min(3, 'Guardian Name must be at least 3 characters').max(50, 'Guardian Name must be at most 50 characters'),
+  guardianContact: yup.string().required('Guardian Contact is required').matches(/^[0-9]{10}$/, 'Guardian Contact must be exactly 10 digits'),
+  grade: yup.string().required('Grade is required').oneOf([
+    'Creche', 'Nursery 1', 'Nursery 2', 'KG 1', 'KG 2',
+    'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6',
+    'JHS 1', 'JHS 2', 'JHS 3'
+  ], 'Invalid grade'),
+  status: yup.string().required('Status is required').oneOf(['Active', 'Inactive'], 'Invalid status'),
 });
 
 const GRADES = [
@@ -25,20 +38,20 @@ const GRADES = [
   'JHS 1', 'JHS 2', 'JHS 3'
 ];
 
-const StudentModal = ({ isOpen, onClose, student, onSave }) => {
+const StudentModal = ({ isOpen, onClose, student, onSave, error }) => {
   const { handleSubmit, control, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: student?.name || '',
-      dateOfBirth: student?.dateOfBirth || '',
-      gender: student?.gender || 'Male',
-      address: student?.address || '',
-      contactNumber: student?.contactNumber || '',
-      email: student?.email || '',
-      guardianName: student?.guardianName || '',
-      guardianContact: student?.guardianContact || '',
-      grade: student?.grade || '',
-      status: student?.status || 'Active',
+      name: '',
+      dateOfBirth: '',
+      gender: 'Male',
+      address: '',
+      contactNumber: '',
+      email: '',
+      guardianName: '',
+      guardianContact: '',
+      grade: '',
+      status: 'Active',
     },
   });
 
@@ -90,6 +103,7 @@ const StudentModal = ({ isOpen, onClose, student, onSave }) => {
                   </button>
                 </DialogTitle>
                 <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
+                  {error && <p className="text-red-600">{error}</p>}
                   <InputField name="name" label="Name" control={control} errors={errors} />
                   <InputField name="dateOfBirth" label="Date of Birth" control={control} errors={errors} type="date" />
                   <SelectField name="gender" label="Gender" control={control} errors={errors} options={['Male', 'Female', 'Other']} />
@@ -176,6 +190,7 @@ StudentModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   student: PropTypes.object,
   onSave: PropTypes.func.isRequired,
+  error: PropTypes.string,
 };
 
 InputField.propTypes = {

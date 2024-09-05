@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import StudentModal from '../../components/admin/studentManagement/AddStudentModal';
 import StudentDetailsModal from '../../components/admin/studentManagement/StudentDetailsModal';
 import SearchBar from '../../components/admin/studentManagement/SearchBar';
@@ -7,23 +7,39 @@ import Tabs from '../../components/admin/studentManagement/TabsComponent';
 import ExportDataButton from '../../components/admin/studentManagement/ExportDataButton';
 import FilterDropdown from '../../components/admin/studentManagement/FilterDropDown';
 import GradeCard from '../../components/admin/studentManagement/GradeCard';
-import { FaArrowLeft } from 'react-icons/fa';
-import { generateSampleStudents } from '../../components/utils/generateStudents';
-
-const GRADES = [
-  'Creche', 'Nursery 1', 'Nursery 2', 'KG 1', 'KG 2',
-  'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6',
-  'JHS 1', 'JHS 2', 'JHS 3'
-];
+import AddGradeModal from '../../components/admin/studentManagement/AddGradeModal';
+import { FaArrowLeft, FaPlus } from 'react-icons/fa';
+import db from '../../db/db.js';
 
 const StudentManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isAddGradeModalOpen, setIsAddGradeModalOpen] = useState(false);
   const [currentStudent, setCurrentStudent] = useState(null);
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [showGradeCards, setShowGradeCards] = useState(true);
-  const [students, setStudents] = useState(generateSampleStudents());
+  const [students, setStudents] = useState([]);
+  const [grades, setGrades] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchGrades = async () => {
+      const allGrades = await db.grades.toArray();
+      setGrades(allGrades);
+    };
+    fetchGrades();
+  }, []);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      if (selectedGrade) {
+        const studentsInGrade = await db.students.where({ gradeId: selectedGrade.id }).toArray();
+        setStudents(studentsInGrade);
+      }
+    };
+    fetchStudents();
+  }, [selectedGrade]);
 
   const handleSearch = useCallback((e) => {
     setSearchTerm(e.target.value);
@@ -35,32 +51,56 @@ const StudentManagement = () => {
     setIsModalOpen(true);
   }, []);
 
-  const handleEditStudent = useCallback((id) => {
-    const student = students.find(s => s.id === id);
+  const handleEditStudent = useCallback(async (id) => {
+    const student = await db.students.get(id);
     setCurrentStudent(student);
     setIsModalOpen(true);
-  }, [students]);
+  }, []);
 
-  const handleViewStudentDetails = useCallback((id) => {
-    const student = students.find(s => s.id === id);
+  const handleViewStudentDetails = useCallback(async (id) => {
+    const student = await db.students.get(id);
     setCurrentStudent(student);
     setIsDetailsModalOpen(true);
-  }, [students]);
+  }, []);
 
-  const handleSaveStudent = useCallback((studentData) => {
-    setStudents(prevStudents => {
-      if (studentData.id) {
-        return prevStudents.map(s => (s.id === studentData.id ? studentData : s));
-      } else {
-        return [...prevStudents, { ...studentData, id: prevStudents.length + 1 }];
-      }
-    });
+  const handleSaveStudent = useCallback(async (studentData) => {
+    const gradeExists = grades.some(grade => grade.name === studentData.grade);
+    if (!gradeExists) {
+      setError('Selected grade does not exist.');
+      return;
+    }
+
+    if (studentData.id) {
+      await db.students.update(studentData.id, studentData);
+    } else {
+      const selectedGradeObj = grades.find(grade => grade.name === studentData.grade);
+      studentData.gradeId = selectedGradeObj.id;
+      const studentId = await db.students.add(studentData);
+      await db.admissions.add({ studentId, admissionDate: new Date() });
+    }
+    const studentsInGrade = await db.students.where({ gradeId: selectedGrade.id }).toArray();
+    setStudents(studentsInGrade);
     setIsModalOpen(false);
-  }, []);
+    setError('');
+  }, [grades, selectedGrade]);
 
-  const handleDeleteStudent = useCallback((id) => {
-    setStudents(prevStudents => prevStudents.filter(s => s.id !== id));
-  }, []);
+  const handleDeleteStudent = useCallback(async (id) => {
+    await db.students.delete(id);
+    const studentsInGrade = await db.students.where({ gradeId: selectedGrade.id }).toArray();
+    setStudents(studentsInGrade);
+  }, [selectedGrade]);
+
+  const handleDeleteGrade = useCallback(async (grade) => {
+    const gradeObj = grades.find(g => g.name === grade);
+    if (gradeObj) {
+      await db.students.where({ gradeId: gradeObj.id }).delete();
+      await db.grades.delete(gradeObj.id);
+      setGrades(grades.filter(g => g.id !== gradeObj.id));
+      setStudents([]);
+      setSelectedGrade(null);
+      setShowGradeCards(true);
+    }
+  }, [grades]);
 
   const handleExport = useCallback(() => {
     // Implement export logic here
@@ -76,9 +116,15 @@ const StudentManagement = () => {
     setShowGradeCards(true);
   }, []);
 
+  const handleAddGrade = useCallback(async (gradeName) => {
+    const id = await db.grades.add({ name: gradeName });
+    setGrades([...grades, { id, name: gradeName }]);
+    setIsAddGradeModalOpen(false);
+  }, [grades]);
+
   const filteredStudents = useMemo(() => 
     selectedGrade
-      ? students.filter(student => student.grade === selectedGrade)
+      ? students.filter(student => student.gradeId === selectedGrade.id)
       : students,
     [selectedGrade, students]
   );
@@ -92,6 +138,7 @@ const StudentManagement = () => {
         onClose={() => setIsModalOpen(false)} 
         student={currentStudent} 
         onSave={handleSaveStudent} 
+        error={error}
       />
 
       <StudentDetailsModal
@@ -100,15 +147,27 @@ const StudentManagement = () => {
         student={currentStudent}
       />
 
+      <AddGradeModal
+        isOpen={isAddGradeModalOpen}
+        onClose={() => setIsAddGradeModalOpen(false)}
+        onSave={handleAddGrade}
+      />
+
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <SearchBar searchTerm={searchTerm} onSearch={handleSearch} />
         <AddStudentButton onAddStudent={handleAddStudent} />
+        <button
+          onClick={() => setIsAddGradeModalOpen(true)}
+          className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200"
+        >
+          <FaPlus className="mr-2" /> Add Grade
+        </button>
       </div>
 
       {showGradeCards ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {GRADES.map((grade, index) => (
-            <GradeCard key={index} grade={grade} onClick={handleGradeClick} />
+          {grades.map((grade) => (
+            <GradeCard key={grade.id} grade={grade.name} onClick={() => handleGradeClick(grade)} onDelete={handleDeleteGrade} />
           ))}
         </div>
       ) : (

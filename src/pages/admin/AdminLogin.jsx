@@ -4,6 +4,7 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import { IoIosSync, IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { FaUser, FaLock, FaExclamationTriangle } from 'react-icons/fa';
 import { Dialog, Transition, DialogTitle, TransitionChild } from '@headlessui/react';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -45,10 +46,7 @@ const LoginPage = () => {
     if (validate()) {
       setLoading(true);
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const testUser = { username: formData.username, type: 'admin' };
-        login(testUser);
+        await login(formData.username, formData.password);
         navigate('/app/admin/dashboard');
       } catch (error) {
         setStatusMessage({ type: 'error', message: 'Invalid username or password' });
@@ -198,6 +196,15 @@ const LoginPage = () => {
                 'Sign in'
               )}
             </button>
+
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Don&apos;t have an account?{' '}
+                <Link to="/admin-signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+                  Register here
+                </Link>
+              </p>
+              </div>
           </div>
         </form>
       </div>

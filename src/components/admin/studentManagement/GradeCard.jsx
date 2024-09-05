@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import { FaBaby, FaChild, FaUserGraduate } from 'react-icons/fa';
+import { FaBaby, FaChild, FaUserGraduate, FaTrash } from 'react-icons/fa';
 import { GiSchoolBag } from 'react-icons/gi';
 import { MdSchool } from 'react-icons/md';
 
-const GradeCard = ({ grade, onClick }) => {
+const GradeCard = ({ grade, onClick, onDelete }) => {
   const getIconAndColor = (grade) => {
     if (grade.startsWith('Creche') || grade.startsWith('Nursery')) {
       return { icon: <FaBaby className="text-5xl" />, color: 'from-pink-400 to-pink-600' };
@@ -22,10 +22,14 @@ const GradeCard = ({ grade, onClick }) => {
 
   return (
     <div
-      onClick={() => onClick(grade)}
-      className={`cursor-pointer p-6 m-3 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br ${color} text-white`}
+      className={`relative cursor-pointer p-6 m-3 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br ${color} text-white`}
     >
-      <div className="flex flex-col items-center">
+      <div className="absolute top-2 right-2">
+        <button onClick={() => onDelete(grade)} className="text-red-600 hover:text-red-800">
+          <FaTrash />
+        </button>
+      </div>
+      <div onClick={() => onClick(grade)} className="flex flex-col items-center">
         <div className="mb-4 bg-white bg-opacity-20 p-4 rounded-full text-gray-700">
           {icon}
         </div>
@@ -38,7 +42,8 @@ const GradeCard = ({ grade, onClick }) => {
 
 GradeCard.propTypes = {
   grade: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default GradeCard;

@@ -4,6 +4,7 @@ import { AuthProvider } from '../components/contexts/AuthContext';
 import AdminLayout from '../components/layouts/AdminLayout';
 import LandingPage from '../pages/LandingPage';
 import AdminLogin from '../pages/admin/AdminLogin';
+import AdminSignup from '../pages/admin/AdminSignup';
 import NotFound from '../pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
 import Loading from '../components/LoadingPage';
@@ -33,6 +34,7 @@ const AppRouter = () => {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-signup" element={<AdminSignup />} />
             
             {/* Student and Staff login routes now lead to ComingSoon */}
             <Route path="/learner-login" element={<ComingSoon />} />
