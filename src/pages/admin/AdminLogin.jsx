@@ -18,7 +18,7 @@ const LoginPage = () => {
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [statusMessage, setStatusMessage] = useState({ type: '', message: '' });
-  const { login } = useAuth();
+  const { login, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const validate = () => {
@@ -65,11 +65,16 @@ const LoginPage = () => {
     setLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setStatusMessage({ type: 'success', message: 'Password reset instructions sent to your email' });
-      setIsForgotPasswordOpen(false);
+      const newPassword = prompt('Enter your new password:');
+      if (newPassword) {
+        await resetPassword(forgotPasswordEmail, newPassword);
+        setStatusMessage({ type: 'success', message: 'Password reset successfully' });
+        setIsForgotPasswordOpen(false);
+      } else {
+        setStatusMessage({ type: 'error', message: 'Password reset cancelled' });
+      }
     } catch (error) {
-      setStatusMessage({ type: 'error', message: 'Failed to send reset instructions. Please try again.' });
+      setStatusMessage({ type: 'error', message: 'Failed to reset password. Please try again.' });
     } finally {
       setLoading(false);
     }
