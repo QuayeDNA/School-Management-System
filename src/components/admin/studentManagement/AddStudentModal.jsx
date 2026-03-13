@@ -1,7 +1,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import PropTypes from 'prop-types';
 import { FaTimes, FaUserGraduate } from 'react-icons/fa';
 import { Fragment } from 'react';
@@ -63,7 +63,7 @@ const StudentModal = ({ isOpen, onClose, student, onSave, error }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
-        <TransitionChild
+        <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -73,11 +73,11 @@ const StudentModal = ({ isOpen, onClose, student, onSave, error }) => {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </TransitionChild>
+        </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <TransitionChild
+            <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -86,8 +86,8 @@ const StudentModal = ({ isOpen, onClose, student, onSave, error }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <DialogTitle
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Title
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900 flex items-center justify-between"
                 >
@@ -101,7 +101,7 @@ const StudentModal = ({ isOpen, onClose, student, onSave, error }) => {
                   >
                     <FaTimes />
                   </button>
-                </DialogTitle>
+                </Dialog.Title>
                 <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
                   {error && <p className="text-red-600">{error}</p>}
                   <InputField name="name" label="Name" control={control} errors={errors} />
@@ -131,8 +131,8 @@ const StudentModal = ({ isOpen, onClose, student, onSave, error }) => {
                     </button>
                   </div>
                 </form>
-              </DialogPanel>
-            </TransitionChild>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </div>
       </Dialog>

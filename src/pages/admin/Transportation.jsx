@@ -1,53 +1,59 @@
 import React, { useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/react';
+import { toast } from 'react-hot-toast';
 import { FaBus, FaRoute, FaUserTie, FaCalendarAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { useBuses, useRoutes, useDrivers, useAddBus, useAddRoute, useAddDriver } from '../../hooks/useTransportation';
 
 const TransportationManagement = () => {
-  const [buses, setBuses] = useState([
-    { id: 1, number: 'SB-001', capacity: 40, driver: 'John Doe', route: 'Route A', status: 'Active' },
-    { id: 2, number: 'SB-002', capacity: 35, driver: 'Jane Smith', route: 'Route B', status: 'Maintenance' },
-    { id: 3, number: 'SB-003', capacity: 45, driver: 'Mike Johnson', route: 'Route C', status: 'Active' },
-  ]);
+  const { data: buses = [] } = useBuses();
+  const { data: routes = [] } = useRoutes();
+  const { data: drivers = [] } = useDrivers();
 
-  const [routes, setRoutes] = useState([
-    { id: 1, name: 'Route A', stops: ['Stop 1', 'Stop 2', 'Stop 3'], assignedBus: 'SB-001' },
-    { id: 2, name: 'Route B', stops: ['Stop 4', 'Stop 5', 'Stop 6'], assignedBus: 'SB-002' },
-    { id: 3, name: 'Route C', stops: ['Stop 7', 'Stop 8', 'Stop 9'], assignedBus: 'SB-003' },
-  ]);
-
-  const [drivers, setDrivers] = useState([
-    { id: 1, name: 'John Doe', license: 'DL-12345', phone: '123-456-7890', assignedBus: 'SB-001' },
-    { id: 2, name: 'Jane Smith', license: 'DL-67890', phone: '234-567-8901', assignedBus: 'SB-002' },
-    { id: 3, name: 'Mike Johnson', license: 'DL-54321', phone: '345-678-9012', assignedBus: 'SB-003' },
-  ]);
+  const addBusMutation = useAddBus();
+  const addRouteMutation = useAddRoute();
+  const addDriverMutation = useAddDriver();
 
   const [selectedTab, setSelectedTab] = useState('buses');
 
-  const handleAddBus = () => {
-    // Logic to add a new bus
-    alert('Add new bus functionality to be implemented');
+  const handleAddBus = async () => {
+    await addBusMutation.mutateAsync({
+      number: `SB-${Date.now()}`,
+      capacity: 40,
+      driver: 'New Driver',
+      route: 'Route A',
+      status: 'Active',
+    });
+    toast('New bus added', { icon: '🚌' });
   };
 
-  const handleAddRoute = () => {
-    // Logic to add a new route
-    alert('Add new route functionality to be implemented');
+  const handleAddRoute = async () => {
+    await addRouteMutation.mutateAsync({
+      name: `Route ${Date.now()}`,
+      stops: ['Stop 1', 'Stop 2'],
+      assignedBus: buses[0]?.number ?? '',
+    });
+    toast('New route added', { icon: '🗺️' });
   };
 
-  const handleAddDriver = () => {
-    // Logic to add a new driver
-    alert('Add new driver functionality to be implemented');
+  const handleAddDriver = async () => {
+    await addDriverMutation.mutateAsync({
+      name: `Driver ${Date.now()}`,
+      license: `DL-${Math.floor(Math.random() * 100000)}`,
+      phone: '000-000-0000',
+      assignedBus: buses[0]?.number ?? '',
+    });
+    toast('New driver added', { icon: '👨‍✈️' });
   };
 
   const handleScheduleMaintenance = (busId) => {
-    // Logic to schedule maintenance for a bus
-    alert(`Schedule maintenance for bus ${busId}`);
+    toast(`Schedule maintenance for bus ${busId} not implemented yet`, { icon: '🛠️' });
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6">Transportation Management</h2>
-      <Tab.Group selectedIndex={['buses', 'routes', 'drivers'].indexOf(selectedTab)} onChange={(index) => setSelectedTab(['buses', 'routes', 'drivers'][index])}>
-        <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6">
+      <TabGroup selectedIndex={['buses', 'routes', 'drivers'].indexOf(selectedTab)} onChange={(index) => setSelectedTab(['buses', 'routes', 'drivers'][index])}>
+        <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6">
           <Tab className={({ selected }) => `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2 ${selected ? 'bg-white shadow' : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'}`}>
             <FaBus className="inline-block mr-2" /> Buses
           </Tab>
@@ -57,9 +63,9 @@ const TransportationManagement = () => {
           <Tab className={({ selected }) => `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2 ${selected ? 'bg-white shadow' : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'}`}>
             <FaUserTie className="inline-block mr-2" /> Drivers
           </Tab>
-        </Tab.List>
-        <Tab.Panels>
-          <Tab.Panel>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
             <div className="mb-4 flex justify-between items-center">
               <h3 className="text-xl font-semibold">School Buses</h3>
               <button onClick={handleAddBus} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
@@ -98,8 +104,8 @@ const TransportationManagement = () => {
                 ))}
               </tbody>
             </table>
-          </Tab.Panel>
-          <Tab.Panel>
+          </TabPanel>
+          <TabPanel>
             <div className="mb-4 flex justify-between items-center">
               <h3 className="text-xl font-semibold">Bus Routes</h3>
               <button onClick={handleAddRoute} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
@@ -124,8 +130,8 @@ const TransportationManagement = () => {
                 ))}
               </tbody>
             </table>
-          </Tab.Panel>
-          <Tab.Panel>
+          </TabPanel>
+          <TabPanel>
             <div className="mb-4 flex justify-between items-center">
               <h3 className="text-xl font-semibold">Bus Drivers</h3>
               <button onClick={handleAddDriver} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
@@ -152,9 +158,9 @@ const TransportationManagement = () => {
                 ))}
               </tbody>
             </table>
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+          </TabPanel>
+        </TabPanels>
+      </TabGroup>
       <div className="mt-8 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
         <p className="font-bold flex items-center"><FaExclamationTriangle className="mr-2" /> Maintenance Alert</p>
         <p>Bus SB-002 is due for maintenance in 3 days. Please schedule service.</p>

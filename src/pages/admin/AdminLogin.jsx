@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { IoIosSync, IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { FaUser, FaLock, FaExclamationTriangle } from 'react-icons/fa';
-import { Dialog, Transition, DialogTitle, TransitionChild } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -222,7 +222,7 @@ const LoginPage = () => {
           onClose={() => setIsForgotPasswordOpen(false)}
         >
           <div className="min-h-screen px-4 text-center">
-            <TransitionChild
+            <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -232,13 +232,13 @@ const LoginPage = () => {
               leaveTo="opacity-0"
             >
               <div className="fixed inset-0 bg-black opacity-60" />
-            </TransitionChild>
+            </Transition.Child>
 
             <span className="inline-block h-screen align-middle" aria-hidden="true">
               &#8203;
             </span>
             
-            <TransitionChild
+            <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -248,12 +248,12 @@ const LoginPage = () => {
               leaveTo="opacity-0 scale-95"
             >
               <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <DialogTitle
+                <Dialog.Title
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
                   Reset your password
-                </DialogTitle>
+                </Dialog.Title>
                 <form onSubmit={handleForgotPassword}>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
@@ -279,7 +279,7 @@ const LoginPage = () => {
                   </div>
                 </form>
               </div>
-            </TransitionChild>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition>

@@ -1,39 +1,46 @@
-import { useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { useState, useMemo } from 'react';
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/react';
 import { FaSearch, FaPlus, FaBook, FaEdit, FaTrash, FaDownload, FaFilter, FaTags, FaUserGraduate } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import AddBookModal from '../../components/admin/ui/modal/AddBookModal';
+import { useBooks, useAddBook, useDeleteBook } from '../../hooks/useBooks';
 
 const ELibraryManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [books, setBooks] = useState([
-    { id: 1, title: 'To Kill a Mockingbird', author: 'Harper Lee', category: 'Fiction', available: 5 },
-    { id: 2, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', category: 'Fiction', available: 3 },
-    { id: 3, title: 'Math Principles', author: 'John Smith', category: 'Textbook', available: 10 },
-    { id: 4, title: 'World History', author: 'Jane Doe', category: 'Textbook', available: 7 },
-  ]);
+  const { data: books = [] } = useBooks();
+  const addBookMutation = useAddBook();
+  const deleteBookMutation = useDeleteBook();
 
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
 
-  const handleAddBook = (newBook) => {
-    // Add the new book to your books state or send to API
-    setBooks([...books, { id: books.length + 1, ...newBook, available: 1 }]);
+  const handleAddBook = async (newBook) => {
+    await addBookMutation.mutateAsync({ ...newBook, available: 1 });
+    closeAddModal();
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    // Implement search logic here
   };
 
   const handleEditBook = (id) => {
-    // Implement edit book logic
+    // TODO: Implement book editing flow.
   };
 
-  const handleDeleteBook = (id) => {
-    // Implement delete book logic
+  const handleDeleteBook = async (id) => {
+    await deleteBookMutation.mutateAsync(id);
   };
+
+  const booksFiltered = useMemo(() => {
+    if (!searchTerm.trim()) return books;
+    const normalized = searchTerm.trim().toLowerCase();
+    return books.filter((book) =>
+      book.title.toLowerCase().includes(normalized) ||
+      book.author.toLowerCase().includes(normalized) ||
+      book.category.toLowerCase().includes(normalized)
+    );
+  }, [books, searchTerm]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -50,7 +57,8 @@ const ELibraryManagement = () => {
           />
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
-        <button onClick={openAddModal}
+        <button
+          onClick={openAddModal}
           className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600 transition-colors"
         >
           <FaPlus className="mr-2" /> Add New Book
@@ -58,27 +66,31 @@ const ELibraryManagement = () => {
         <AddBookModal isOpen={isAddModalOpen} closeModal={closeAddModal} onAddBook={handleAddBook} />
       </div>
 
-      <Tab.Group>
-        <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6 overflow-x-auto">
+      <TabGroup>
+        <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6 overflow-x-auto">
           {['All Books', 'Textbooks', 'Fiction', 'Non-Fiction', 'References'].map((category) => (
             <Tab
               key={category}
               className={({ selected }) =>
                 `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700 whitespace-nowrap
-                ${selected ? 'bg-white shadow' : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'}`
+                ${
+                  selected
+                    ? 'bg-white shadow'
+                    : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                }`
               }
             >
               {category}
             </Tab>
           ))}
-        </Tab.List>
-        <Tab.Panels>
-          <Tab.Panel>
-            <BookTable books={books} onEdit={handleEditBook} onDelete={handleDeleteBook} />
-          </Tab.Panel>
-          {/* Add similar Tab.Panel components for other categories */}
-        </Tab.Panels>
-      </Tab.Group>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <BookTable books={booksFiltered} onEdit={handleEditBook} onDelete={handleDeleteBook} />
+          </TabPanel>
+          {/* Add similar TabPanel components for other categories */}
+        </TabPanels>
+      </TabGroup>
 
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard title="Total Books" value={books.length} icon={<FaBook className="text-blue-500" />} />

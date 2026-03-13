@@ -18,8 +18,9 @@ import {
 } from "react-icons/fa";
 import PropTypes from "prop-types";
 
-const Sidebar = ({ expanded, onToggle, isVisible }) => {
+const Sidebar = ({ expanded, onToggle, isVisible, isMobile }) => {
   const { logout } = useAuth();
+  if (!isVisible && !isMobile) return null;
 
   const sidebarLinks = [
     { to: "/app/admin/dashboard", icon: FaHome, text: "Dashboard" },
@@ -42,14 +43,17 @@ const Sidebar = ({ expanded, onToggle, isVisible }) => {
 
   if (!isVisible) return null;
 
+  const baseWidth = expanded ? 'w-64' : 'w-20';
+  const mobileTransform = isVisible ? 'translate-x-0' : '-translate-x-full';
+
   return (
     <div
       className={`bg-gradient-to-b from-teal-700 to-green-600 text-white h-screen fixed top-0 left-0 z-50 ${
-        expanded ? "w-64" : "w-20"
-      } transition-all duration-300 ease-in-out`}>
+        isMobile ? `w-64 ${mobileTransform}` : baseWidth
+      } transition-transform duration-300 ease-in-out`}>
       <div className="flex items-center justify-between p-4">
         <h2 className={`font-bold text-xl ${expanded ? "block" : "hidden"}`}>
-          I Am Blessed Montessori School
+          EduSphere School System
         </h2>
         <button onClick={onToggle} className="text-white focus:outline-none">
           {expanded ? (

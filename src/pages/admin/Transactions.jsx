@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Tab } from "@headlessui/react";
+import React, { useMemo, useState } from "react";
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
 import {
   FaMoneyBillWave,
   FaChartLine,
@@ -10,13 +10,45 @@ import {
   FaPlus,
   FaFileExport,
 } from "react-icons/fa";
+import { useTransactions, useAddTransaction, useDeleteTransaction } from "../../hooks/useTransactions";
 
 const TransactionsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { data: transactions = [] } = useTransactions();
+  const addTransactionMutation = useAddTransaction();
+  const deleteTransactionMutation = useDeleteTransaction();
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    // Implement search logic here₵
+  };
+
+  const filteredTransactions = useMemo(() => {
+    const normalized = searchTerm.trim().toLowerCase();
+    if (!normalized) return transactions;
+
+    return transactions.filter((transaction) => {
+      return (
+        transaction.type.toLowerCase().includes(normalized) ||
+        transaction.category?.toLowerCase()?.includes(normalized) ||
+        String(transaction.amount).includes(normalized)
+      );
+    });
+  }, [transactions, searchTerm]);
+
+  const handleAddTransaction = async () => {
+    const description = window.prompt('Enter transaction description');
+    if (!description) return;
+
+    const amount = Number(window.prompt('Enter amount (numbers only)'));
+    if (Number.isNaN(amount)) return;
+
+    await addTransactionMutation.mutateAsync({
+      type: 'income',
+      amount,
+      date: new Date().toISOString(),
+      category: 'General',
+      syncStatus: 'pending',
+    });
   };
 
   return (
@@ -26,17 +58,30 @@ const TransactionsPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <FinancialCard
           title="Total Income"
-          amount="₵250,000"
+          amount={`₵${transactions
+            .filter((t) => t.type === 'income')
+            .reduce((sum, t) => sum + Number(t.amount), 0)
+            .toLocaleString()}`}
           icon={<FaMoneyBillWave className="text-green-500" />}
         />
         <FinancialCard
           title="Total Expenses"
-          amount="₵180,000"
+          amount={`₵${transactions
+            .filter((t) => t.type === 'expense')
+            .reduce((sum, t) => sum + Number(t.amount), 0)
+            .toLocaleString()}`}
           icon={<FaMoneyBillWave className="text-red-500" />}
         />
         <FinancialCard
           title="Current Balance"
-          amount="₵70,000"
+          amount={`₵${(
+            transactions
+              .filter((t) => t.type === 'income')
+              .reduce((sum, t) => sum + Number(t.amount), 0) -
+            transactions
+              .filter((t) => t.type === 'expense')
+              .reduce((sum, t) => sum + Number(t.amount), 0)
+          ).toLocaleString()}`}
           icon={<FaMoneyBillWave className="text-blue-500" />}
         />
       </div>
@@ -53,7 +98,10 @@ const TransactionsPage = () => {
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
         <div className="flex gap-4">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600 transition-colors">
+          <button
+            onClick={handleAddTransaction}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600 transition-colors"
+          >
             <FaPlus className="mr-2" /> New Transaction
           </button>
           <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-600 transition-colors">
@@ -62,8 +110,8 @@ const TransactionsPage = () => {
         </div>
       </div>
 
-      <Tab.Group>
-        <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6 overflow-x-auto">
+      <TabGroup>
+        <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6 overflow-x-auto">
           {[
             "Overview",
             "Income",
@@ -86,31 +134,31 @@ const TransactionsPage = () => {
               {category}
             </Tab>
           ))}
-        </Tab.List>
-        <Tab.Panels>
-          <Tab.Panel>
-            <OverviewPanel />
-          </Tab.Panel>
-          <Tab.Panel>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <OverviewPanel transactions={filteredTransactions} />
+          </TabPanel>
+          <TabPanel>
             <IncomePanel />
-          </Tab.Panel>
-          <Tab.Panel>
+          </TabPanel>
+          <TabPanel>
             <ExpensesPanel />
-          </Tab.Panel>
-          <Tab.Panel>
+          </TabPanel>
+          <TabPanel>
             <InvoicesPanel />
-          </Tab.Panel>
-          <Tab.Panel>
-            <HistoryPanel />
-          </Tab.Panel>
-          <Tab.Panel>
+          </TabPanel>
+          <TabPanel>
+            <HistoryPanel transactions={filteredTransactions} onDelete={deleteTransactionMutation.mutateAsync} />
+          </TabPanel>
+          <TabPanel>
             <BudgetPanel />
-          </Tab.Panel>
-          <Tab.Panel>
+          </TabPanel>
+          <TabPanel>
             <SettingsPanel />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+          </TabPanel>
+        </TabPanels>
+      </TabGroup>
     </div>
   );
 };
@@ -125,11 +173,22 @@ const FinancialCard = ({ title, amount, icon }) => (
   </div>
 );
 
-const OverviewPanel = () => (
+const OverviewPanel = ({ transactions }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
-      {/* Add a table or list of recent transactions here */}
+      {transactions.length === 0 ? (
+        <p className="text-gray-500">No transactions yet.</p>
+      ) : (
+        <ul className="space-y-2">
+          {transactions.slice(-5).reverse().map((txn) => (
+            <li key={txn.id} className="flex justify-between">
+              <span className="font-medium">{txn.category || txn.type}</span>
+              <span className="text-gray-600">₵{Number(txn.amount).toLocaleString()}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">Financial Summary</h2>
@@ -159,10 +218,42 @@ const InvoicesPanel = () => (
   </div>
 );
 
-const HistoryPanel = () => (
+const HistoryPanel = ({ transactions, onDelete }) => (
   <div className="bg-white rounded-lg shadow p-6">
     <h2 className="text-xl font-semibold mb-4">Transaction History</h2>
-    {/* Add transaction history table or components here */}
+    {transactions.length === 0 ? (
+      <p className="text-gray-500">No transactions have been recorded yet.</p>
+    ) : (
+      <table className="min-w-full">
+        <thead>
+          <tr>
+            <th className="py-2 text-left">Date</th>
+            <th className="py-2 text-left">Type</th>
+            <th className="py-2 text-left">Category</th>
+            <th className="py-2 text-left">Amount</th>
+            <th className="py-2 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transactions.map((txn) => (
+            <tr key={txn.id} className="border-t">
+              <td className="py-2">{new Date(txn.date).toLocaleDateString()}</td>
+              <td className="py-2">{txn.type}</td>
+              <td className="py-2">{txn.category}</td>
+              <td className="py-2">₵{Number(txn.amount).toLocaleString()}</td>
+              <td className="py-2">
+                <button
+                  onClick={() => onDelete(txn.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
   </div>
 );
 

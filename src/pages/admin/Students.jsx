@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import StudentModal from '../../components/admin/studentManagement/AddStudentModal';
 import StudentDetailsModal from '../../components/admin/studentManagement/StudentDetailsModal';
 import SearchBar from '../../components/admin/studentManagement/SearchBar';
@@ -9,7 +9,10 @@ import FilterDropdown from '../../components/admin/studentManagement/FilterDropD
 import GradeCard from '../../components/admin/studentManagement/GradeCard';
 import AddGradeModal from '../../components/admin/studentManagement/AddGradeModal';
 import { FaArrowLeft, FaPlus } from 'react-icons/fa';
-import db from '../../db/db.js';
+import { useAddGrade, useDeleteGrade, useGrades } from '../../hooks/useGrades';
+import { useStudents, useAddStudent, useUpdateStudent, useDeleteStudent } from '../../hooks/useStudents';
+import { useAddAdmission } from '../../hooks/useAdmissions';
+import { studentService } from '../../services/studentService'
 
 const StudentManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,27 +22,17 @@ const StudentManagement = () => {
   const [currentStudent, setCurrentStudent] = useState(null);
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [showGradeCards, setShowGradeCards] = useState(true);
-  const [students, setStudents] = useState([]);
-  const [grades, setGrades] = useState([]);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchGrades = async () => {
-      const allGrades = await db.grades.toArray();
-      setGrades(allGrades);
-    };
-    fetchGrades();
-  }, []);
+  const { data: grades = [] } = useGrades();
+  const { data: students = [] } = useStudents(selectedGrade?.id);
 
-  useEffect(() => {
-    const fetchStudents = async () => {
-      if (selectedGrade) {
-        const studentsInGrade = await db.students.where({ gradeId: selectedGrade.id }).toArray();
-        setStudents(studentsInGrade);
-      }
-    };
-    fetchStudents();
-  }, [selectedGrade]);
+  const addGradeMutation = useAddGrade();
+  const deleteGradeMutation = useDeleteGrade();
+  const addStudentMutation = useAddStudent();
+  const updateStudentMutation = useUpdateStudent();
+  const deleteStudentMutation = useDeleteStudent();
+  const addAdmissionMutation = useAddAdmission();
 
   const handleSearch = useCallback((e) => {
     setSearchTerm(e.target.value);
@@ -52,82 +45,98 @@ const StudentManagement = () => {
   }, []);
 
   const handleEditStudent = useCallback(async (id) => {
-    const student = await db.students.get(id);
+    const student = await studentService.get(id);
     setCurrentStudent(student);
     setIsModalOpen(true);
   }, []);
 
   const handleViewStudentDetails = useCallback(async (id) => {
-    const student = await db.students.get(id);
+    const student = await studentService.get(id);
     setCurrentStudent(student);
     setIsDetailsModalOpen(true);
   }, []);
 
-  const handleSaveStudent = useCallback(async (studentData) => {
-    const gradeExists = grades.some(grade => grade.name === studentData.grade);
-    if (!gradeExists) {
-      setError('Selected grade does not exist.');
-      return;
-    }
+  const handleSaveStudent = useCallback(
+    async (studentData) => {
+      const gradeExists = grades.some((grade) => grade.name === studentData.grade);
+      if (!gradeExists) {
+        setError('Selected grade does not exist.');
+        return;
+      }
 
-    if (studentData.id) {
-      await db.students.update(studentData.id, studentData);
-    } else {
-      const selectedGradeObj = grades.find(grade => grade.name === studentData.grade);
-      studentData.gradeId = selectedGradeObj.id;
-      const studentId = await db.students.add(studentData);
-      await db.admissions.add({ studentId, admissionDate: new Date() });
-    }
-    const studentsInGrade = await db.students.where({ gradeId: selectedGrade.id }).toArray();
-    setStudents(studentsInGrade);
-    setIsModalOpen(false);
-    setError('');
-  }, [grades, selectedGrade]);
+      const selectedGradeObj = grades.find((grade) => grade.name === studentData.grade);
+      const studentPayload = { ...studentData, gradeId: selectedGradeObj.id };
 
-  const handleDeleteStudent = useCallback(async (id) => {
-    await db.students.delete(id);
-    const studentsInGrade = await db.students.where({ gradeId: selectedGrade.id }).toArray();
-    setStudents(studentsInGrade);
-  }, [selectedGrade]);
+      if (studentData.id) {
+        await updateStudentMutation.mutateAsync({ id: studentData.id, data: studentPayload });
+      } else {
+        const studentId = await addStudentMutation.mutateAsync(studentPayload);
+        await addAdmissionMutation.mutateAsync({ studentId, admissionDate: new Date() });
+      }
 
-  const handleDeleteGrade = useCallback(async (grade) => {
-    const gradeObj = grades.find(g => g.name === grade);
-    if (gradeObj) {
-      await db.students.where({ gradeId: gradeObj.id }).delete();
-      await db.grades.delete(gradeObj.id);
-      setGrades(grades.filter(g => g.id !== gradeObj.id));
-      setStudents([]);
-      setSelectedGrade(null);
-      setShowGradeCards(true);
-    }
-  }, [grades]);
+      setIsModalOpen(false);
+      setError('');
+    },
+    [grades, addStudentMutation, updateStudentMutation, addAdmissionMutation]
+  );
+
+  const handleDeleteStudent = useCallback(
+    async (id) => {
+      await deleteStudentMutation.mutateAsync(id);
+    },
+    [deleteStudentMutation]
+  );
+
+  const handleDeleteGrade = useCallback(
+    async (grade) => {
+      const gradeObj = grades.find((g) => g.name === grade);
+      if (gradeObj) {
+        const studentsInGrade = await studentService.listByGrade(gradeObj.id);
+        await Promise.all(studentsInGrade.map((s) => studentService.delete(s.id)));
+        await deleteGradeMutation.mutateAsync(gradeObj.id);
+        setSelectedGrade(null);
+        setShowGradeCards(true);
+      }
+    },
+    [grades, deleteGradeMutation]
+  );
 
   const handleExport = useCallback(() => {
     // Implement export logic here
   }, []);
 
-  const handleGradeClick = useCallback((grade) => {
-    setSelectedGrade(grade);
+  const handleGradeClick = useCallback((gradeName) => {
+    const gradeObj = grades.find((g) => g.name === gradeName);
+    if (!gradeObj) return;
+
+    setSelectedGrade(gradeObj);
     setShowGradeCards(false);
-  }, []);
+  }, [grades]);
 
   const handleBackToGrades = useCallback(() => {
     setSelectedGrade(null);
     setShowGradeCards(true);
   }, []);
 
-  const handleAddGrade = useCallback(async (gradeName) => {
-    const id = await db.grades.add({ name: gradeName });
-    setGrades([...grades, { id, name: gradeName }]);
-    setIsAddGradeModalOpen(false);
-  }, [grades]);
-
-  const filteredStudents = useMemo(() => 
-    selectedGrade
-      ? students.filter(student => student.gradeId === selectedGrade.id)
-      : students,
-    [selectedGrade, students]
+  const handleAddGrade = useCallback(
+    async (gradeName) => {
+      await addGradeMutation.mutateAsync(gradeName);
+      setIsAddGradeModalOpen(false);
+    },
+    [addGradeMutation]
   );
+
+  const filteredStudents = useMemo(() => {
+    if (!searchTerm.trim()) return students;
+    const normalized = searchTerm.trim().toLowerCase();
+    return students.filter((student) => {
+      return (
+        student.firstName.toLowerCase().includes(normalized) ||
+        student.lastName.toLowerCase().includes(normalized) ||
+        student.email.toLowerCase().includes(normalized)
+      );
+    });
+  }, [searchTerm, students]);
 
   return (
     <div className="container mx-auto p-4">
@@ -167,7 +176,12 @@ const StudentManagement = () => {
       {showGradeCards ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {grades.map((grade) => (
-            <GradeCard key={grade.id} grade={grade.name} onClick={() => handleGradeClick(grade)} onDelete={handleDeleteGrade} />
+            <GradeCard
+              key={grade.id}
+              grade={grade.name}
+              onClick={() => handleGradeClick(grade.name)}
+              onDelete={() => handleDeleteGrade(grade.name)}
+            />
           ))}
         </div>
       ) : (

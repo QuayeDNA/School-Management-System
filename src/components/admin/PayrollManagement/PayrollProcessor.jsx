@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, Transition, DialogTitle, TransitionChild, DialogBackdrop } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { FaMoneyCheckAlt } from 'react-icons/fa';
 import propTypes from 'prop-types';
 
@@ -8,7 +8,7 @@ const PayrollProcessor = ({ onClose }) => {
     <Transition appear show={true} as={React.Fragment}>
       <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose}>
         <div className="min-h-screen px-4 text-center">
-          <TransitionChild
+          <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
@@ -17,14 +17,14 @@ const PayrollProcessor = ({ onClose }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <DialogBackdrop className="fixed inset-0 bg-black opacity-30" />
-          </TransitionChild>
+            <div className="fixed inset-0 bg-black opacity-30" />
+          </Transition.Child>
 
           <span className="inline-block h-screen align-middle" aria-hidden="true">
             &#8203;
           </span>
 
-          <TransitionChild
+          <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 scale-95"
@@ -34,9 +34,9 @@ const PayrollProcessor = ({ onClose }) => {
             leaveTo="opacity-0 scale-95"
           >
             <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-              <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900 flex items-center">
+              <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 flex items-center">
                 <FaMoneyCheckAlt className="mr-2" /> Process Payroll
-              </DialogTitle>
+              </Dialog.Title>
               <div className="mt-2">
                 <p className="text-sm text-gray-500">
                   Are you sure you want to process the payroll for all employees?
@@ -63,7 +63,7 @@ const PayrollProcessor = ({ onClose }) => {
                 </button>
               </div>
             </div>
-          </TransitionChild>
+          </Transition.Child>
         </div>
       </Dialog>
     </Transition>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, Transition, DialogTitle, TransitionChild } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { FaTimes as XIcon } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,7 @@ const StudentDetailsModal = ({ isOpen, onClose, student }) => {
         onClose={onClose}
       >
         <div className="min-h-screen px-4 text-center">
-          <TransitionChild
+          <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
@@ -23,8 +23,8 @@ const StudentDetailsModal = ({ isOpen, onClose, student }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-          </TransitionChild>
+            <div className="fixed inset-0 bg-black opacity-30" />
+          </Transition.Child>
 
           <span
             className="inline-block h-screen align-middle"
@@ -33,7 +33,7 @@ const StudentDetailsModal = ({ isOpen, onClose, student }) => {
             &#8203;
           </span>
 
-          <TransitionChild
+          <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 scale-95"
@@ -43,12 +43,12 @@ const StudentDetailsModal = ({ isOpen, onClose, student }) => {
             leaveTo="opacity-0 scale-95"
           >
             <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-              <DialogTitle
+              <Dialog.Title
                 as="h3"
                 className="text-lg font-medium leading-6 text-gray-900"
               >
                 Student Details
-              </DialogTitle>
+              </Dialog.Title>
               <button
                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
                 onClick={onClose}
@@ -88,7 +88,7 @@ const StudentDetailsModal = ({ isOpen, onClose, student }) => {
                 </p>
               </div>
             </div>
-          </TransitionChild>
+          </Transition.Child>
         </div>
       </Dialog>
     </Transition>

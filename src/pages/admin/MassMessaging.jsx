@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/react';
+import { toast } from 'react-hot-toast';
 import { FaEnvelope, FaSms, FaWhatsapp, FaBell, FaUserFriends, FaCalendarAlt, FaClipboard, FaChartBar, FaPaperPlane, FaSearch } from 'react-icons/fa';
 
 const MassMessagingPage = () => {
@@ -10,7 +11,7 @@ const MassMessagingPage = () => {
 
   const handleSendMessage = () => {
     // Implement send message logic
-    console.log('Sending message:', { message, selectedGroups, selectedChannels, scheduleDate });
+    toast.success('Send message feature not implemented yet');
   };
 
   return (
@@ -114,8 +115,8 @@ const MassMessagingPage = () => {
         </div>
 
         <div className="lg:col-span-1">
-          <Tab.Group>
-            <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6">
+          <TabGroup>
+            <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1 mb-6">
               <Tab
                 className={({ selected }) =>
                   `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700
@@ -132,9 +133,9 @@ const MassMessagingPage = () => {
               >
                 History
               </Tab>
-            </Tab.List>
-            <Tab.Panels>
-              <Tab.Panel>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                   <h2 className="text-xl font-semibold mb-4">Message Templates</h2>
                   <ul className="space-y-2">
@@ -148,8 +149,8 @@ const MassMessagingPage = () => {
                     ))}
                   </ul>
                 </div>
-              </Tab.Panel>
-              <Tab.Panel>
+              </TabPanel>
+              <TabPanel>
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                   <h2 className="text-xl font-semibold mb-4">Message History</h2>
                   <ul className="space-y-2">
@@ -161,9 +162,9 @@ const MassMessagingPage = () => {
                     ))}
                   </ul>
                 </div>
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
+              </TabPanel>
+            </TabPanels>
+          </TabGroup>
 
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Quick Stats</h2>

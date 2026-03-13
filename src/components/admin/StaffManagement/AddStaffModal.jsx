@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, Transition, DialogTitle, DialogBackdrop, TransitionChild } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { FaTimes, FaUser, FaEnvelope, FaPhone, FaBirthdayCake, FaVenusMars, FaMapMarkerAlt, FaUserTie, FaBuilding, FaCalendarAlt, FaBriefcase, FaDollarSign, FaGraduationCap, FaCertificate, FaAmbulance } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 
@@ -84,7 +84,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSave }) => {
     <Transition show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose}>
         <div className="min-h-screen px-4 text-center">
-        <TransitionChild
+        <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -93,11 +93,11 @@ const AddEmployeeModal = ({ isOpen, onClose, onSave }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <DialogBackdrop className="fixed inset-0 bg-black opacity-30" />
-        </TransitionChild>
+          <div className="fixed inset-0 bg-black opacity-30" />
+        </Transition.Child>
 
         <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
-        <TransitionChild
+        <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0 scale-95"
@@ -107,9 +107,9 @@ const AddEmployeeModal = ({ isOpen, onClose, onSave }) => {
           leaveTo="opacity-0 scale-95"
         >
             <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-              <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900">
+              <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                 Add New Employee
-              </DialogTitle>
+              </Dialog.Title>
               <button onClick={onClose} className="absolute top-2 right-2 text-gray-400 hover:text-gray-500">
                 <FaTimes />
               </button>
@@ -147,7 +147,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSave }) => {
                 </div>
               )}
             </div>
-          </TransitionChild>
+          </Transition.Child>
         </div>
       </Dialog>
     </Transition>

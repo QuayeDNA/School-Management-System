@@ -35,23 +35,25 @@ const ViewPaymentHistory = ({ employee = {}, paymentHistory = [], onClose }) => 
             </tbody>
           </table>
         </div>
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={onClose}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Close
-          </button>
-        </div>
+        {onClose ? (
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={onClose}
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Close
+            </button>
+          </div>
+        ) : null}
       </div>
 
   );
 };
 
 ViewPaymentHistory.propTypes = {
-  employee: PropTypes.object.isRequired,
-  paymentHistory: PropTypes.array.isRequired,
-  onClose: PropTypes.func.isRequired,
+  employee: PropTypes.object,
+  paymentHistory: PropTypes.array,
+  onClose: PropTypes.func,
 };
 
 export default ViewPaymentHistory;

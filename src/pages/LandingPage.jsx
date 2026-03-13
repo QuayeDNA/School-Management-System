@@ -11,7 +11,7 @@ const LandingPage = () => {
         <header className="bg-transparent">
           <nav className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">I Am Blessed Montessori School</div>
+              <div className="text-2xl font-bold">EduSphere School System</div>
               <div className="hidden md:flex space-x-6">
                 <Link to="/" className="hover:text-teal-300 transition-colors">Home</Link>
                 <Link to="/programs" className="hover:text-teal-300 transition-colors">Programs</Link>
@@ -29,7 +29,7 @@ const LandingPage = () => {
               Nurturing Independence and Love for Learning
             </h1>
             <p className="text-xl md:text-2xl text-teal-200 animate-fade-in-up">
-              A Montessori School Committed to Holistic Child Development
+              A modern school management platform built for educators and administrators
             </p>
           </div>
 
@@ -58,7 +58,7 @@ const LandingPage = () => {
           </div>
 
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-8">Explore Our Montessori Features</h2>
+            <h2 className="text-3xl font-bold text-center mb-8">Explore Our School Management Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <FeatureCard
                 title="Learner Features"
@@ -66,7 +66,7 @@ const LandingPage = () => {
                 features={[
                   "Individual Learning Plans",
                   "Progress Tracking",
-                  "Montessori Resources",
+                  "School Resources",
                   "Self-Paced Learning"
                 ]}
               />
@@ -96,7 +96,7 @@ const LandingPage = () => {
                 features={[
                   "Mobile App",
                   "Parent Portal",
-                  "Virtual Montessori Classes",
+                  "Virtual Classroom Support",
                   "AI-Powered Insights"
                 ]}
               />
@@ -104,7 +104,7 @@ const LandingPage = () => {
           </div>
 
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4">Join Our Montessori Community Today</h2>
+            <h2 className="text-3xl font-bold mb-4">Join Our School Community Today</h2>
             <p className="text-xl mb-8">Empowering children to become independent and lifelong learners.</p>
             <button className="bg-teal-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-teal-600 transition-colors">
               Request a Demo
@@ -114,7 +114,7 @@ const LandingPage = () => {
 
         <footer className="bg-transparent py-8">
           <div className="container mx-auto px-6 text-center">
-            <p>&copy; 2024 I Am Blessed Montessori School. All rights reserved.</p>
+            <p>&copy; 2024 EduSphere School System. All rights reserved.</p>
           </div>
         </footer>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { Dialog } from '@headlessui/react';
 import PropTypes from 'prop-types';
 
 const StudentModal = ({ isOpen, onClose, student, onSave }) => {
@@ -17,10 +17,10 @@ const StudentModal = ({ isOpen, onClose, student, onSave }) => {
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-sm rounded bg-white p-6">
-          <DialogTitle className="text-lg font-medium mb-4">
+        <Dialog.Panel className="w-full max-w-sm rounded bg-white p-6">
+          <Dialog.Title className="text-lg font-medium mb-4">
             {student ? 'Edit Student' : 'Add New Student'}
-          </DialogTitle>
+          </Dialog.Title>
           <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -60,7 +60,7 @@ const StudentModal = ({ isOpen, onClose, student, onSave }) => {
               </button>
             </div>
           </form>
-        </DialogPanel>
+        </Dialog.Panel>
       </div>
     </Dialog>
   );

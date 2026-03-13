@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Tab,
   Menu,
@@ -22,6 +22,7 @@ import {
   FaEllipsisV,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
+import { useStaff, useUpdateStaff } from "../../hooks/useStaff";
 
 // Import new components
 import PayrollProcessor from "../../components/admin/PayrollManagement/PayrollProcessor";
@@ -36,47 +37,14 @@ import EmployeePaymentHistory from "../../components/admin/PayrollManagement/Emp
 
 const PayrollManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [employees, setEmployees] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      role: "Teacher",
-      salary: 50000,
-      lastPayment: "2024-06-30",
-      nextPayment: "2024-07-15",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      role: "Admin",
-      salary: 45000,
-      lastPayment: "2024-06-30",
-      nextPayment: "2024-07-15",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      role: "Janitor",
-      salary: 30000,
-      lastPayment: "2024-06-30",
-      nextPayment: "2024-07-15",
-    },
-    {
-      id: 4,
-      name: "Emily Brown",
-      role: "Intern",
-      salary: 25000,
-      lastPayment: "2024-06-30",
-      nextPayment: "2024-07-15",
-    },
-  ]);
+  const { data: employees = [], isLoading: isLoadingStaff } = useStaff();
+  const updateStaffMutation = useUpdateStaff();
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    // Implement search logic here
   };
 
   const handleProcessPayroll = () => {
@@ -91,6 +59,32 @@ const PayrollManagement = () => {
     setActiveModal(null);
     setSelectedEmployee(null);
   };
+
+  const handleSaveAdjustment = async (adjustments) => {
+    if (!selectedEmployee) return;
+
+    const newSalary = adjustments.basicSalary + adjustments.allowances - adjustments.deductions;
+    await updateStaffMutation.mutateAsync({
+      id: selectedEmployee.id,
+      data: { salary: newSalary },
+    });
+
+    handleCloseModal();
+  };
+
+  const filteredEmployees = useMemo(() => {
+    const normalized = searchTerm.trim().toLowerCase();
+
+    if (!normalized) return employees;
+
+    return employees.filter((employee) => {
+      const fullName = `${employee.firstName ?? ''} ${employee.lastName ?? ''}`.trim().toLowerCase();
+      return (
+        fullName.includes(normalized) ||
+        (employee.role ?? '').toLowerCase().includes(normalized)
+      );
+    });
+  }, [employees, searchTerm]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -147,7 +141,7 @@ const PayrollManagement = () => {
         <TabPanels>
           <TabPanel>
             <PayrollTable
-              employees={employees}
+              employees={filteredEmployees}
               setSelectedEmployee={setSelectedEmployee}
               setActiveModal={setActiveModal}
             />
@@ -177,7 +171,11 @@ const PayrollManagement = () => {
         <ViewPayslip employee={selectedEmployee} onClose={handleCloseModal} />
       )}
       {activeModal === "adjustSalary" && selectedEmployee && (
-        <AdjustSalary employee={selectedEmployee} onClose={handleCloseModal} />
+        <AdjustSalary
+          employee={selectedEmployee}
+          onClose={handleCloseModal}
+          onSave={handleSaveAdjustment}
+        />
       )}
       {activeModal === "employeePaymentHistory" && selectedEmployee && (
         <EmployeePaymentHistory
@@ -207,13 +205,19 @@ const PayrollTable = ({ employees, setSelectedEmployee, setActiveModal }) => (
         {employees.map((employee) => (
           <tr key={employee.id} className="hover:bg-gray-50">
             <td className="py-2 px-4 border-b">{employee.id}</td>
-            <td className="py-2 px-4 border-b">{employee.name}</td>
+            <td className="py-2 px-4 border-b">
+              {employee.firstName} {employee.lastName}
+            </td>
             <td className="py-2 px-4 border-b">{employee.role}</td>
             <td className="py-2 px-4 border-b">
-            ₵{employee.salary.toLocaleString()}
+              ₵{(employee.salary ?? 0).toLocaleString()}
             </td>
-            <td className="py-2 px-4 border-b">{employee.lastPayment}</td>
-            <td className="py-2 px-4 border-b">{employee.nextPayment}</td>
+            <td className="py-2 px-4 border-b">
+              {employee.lastPayment ?? '—'}
+            </td>
+            <td className="py-2 px-4 border-b">
+              {employee.nextPayment ?? '—'}
+            </td>
             <td className="py-2 px-4 border-b">
               <PayrollActions
                 employee={employee}

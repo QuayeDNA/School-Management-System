@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import bcrypt from 'bcryptjs';
 import db from '../../db/db';
 
 const AuthContext = createContext();
@@ -21,17 +22,40 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signUp = useCallback(async (username, email, password) => {
-    await db.users.add({ username, email, password });
+    const hashed = await bcrypt.hash(password, 10);
+    const id = await db.users.add({ username, email, password: hashed, role: 'admin' });
+    const user = await db.users.get(id);
+    const sanitized = { id: user.id, username: user.username, email: user.email, role: user.role };
+    setCurrentUser(sanitized);
+    localStorage.setItem('currentUser', JSON.stringify(sanitized));
+    return sanitized;
   }, []);
 
   const login = useCallback(async (username, password) => {
-    const user = await db.users.get({ username, password });
-    if (user) {
-      setCurrentUser(user);
-      localStorage.setItem('currentUser', JSON.stringify(user));
-    } else {
+    const user = await db.users.get({ username });
+    if (!user) {
       throw new Error('Invalid username or password');
     }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new Error('Invalid username or password');
+    }
+
+    const sanitized = { id: user.id, username: user.username, email: user.email, role: user.role };
+    setCurrentUser(sanitized);
+    localStorage.setItem('currentUser', JSON.stringify(sanitized));
+    return sanitized;
+  }, []);
+
+  const resetPassword = useCallback(async (email, newPassword) => {
+    const user = await db.users.get({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await db.users.update(user.id, { password: hashed });
   }, []);
 
   const logout = useCallback(() => {
@@ -39,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('currentUser');
   }, []);
 
-  const contextValue = useMemo(() => ({ currentUser, signUp, login, logout, loading }), [currentUser, signUp, login, logout, loading]);
+  const contextValue = useMemo(() => ({ currentUser, signUp, login, resetPassword, logout, loading }), [currentUser, signUp, login, resetPassword, logout, loading]);
 
   if (loading) {
     return <div>Loading...</div>;

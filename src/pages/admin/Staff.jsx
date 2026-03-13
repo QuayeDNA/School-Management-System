@@ -1,17 +1,33 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Tab, Menu, Transition, TabGroup, TabList, TabPanel, TabPanels, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { TabGroup, TabList, Tab, TabPanels, TabPanel, Menu, Transition, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { toast } from 'react-hot-toast';
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaFileExport, FaFilter, FaEllipsisV, FaUserTie, FaChalkboardTeacher, FaBroom, FaUserGraduate } from 'react-icons/fa';
 import AddStaffModal from '../../components/admin/StaffManagement/AddStaffModal';
 import PropTypes from 'prop-types';
+import { useStaff, useAddStaff, useDeleteStaff, useSeedStaff } from '../../hooks/useStaff';
 
 const EmployeeManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [employees, setEmployees] = useState([
-    { id: 1, name: 'John Doe', role: 'Teacher', department: 'Mathematics', status: 'Full-time' },
-    { id: 2, name: 'Jane Smith', role: 'Admin', department: 'Administration', status: 'Full-time' },
-    { id: 3, name: 'Mike Johnson', role: 'Janitor', department: 'Maintenance', status: 'Part-time' },
-    { id: 4, name: 'Emily Brown', role: 'Intern', department: 'IT', status: 'Temporary' },
-  ]);
+  const { data: employees = [], isLoading: isLoadingStaff } = useStaff();
+  const addStaffMutation = useAddStaff();
+  const deleteStaffMutation = useDeleteStaff();
+  const seedStaff = useSeedStaff();
+
+  useEffect(() => {
+    if (!isLoadingStaff && employees.length === 0) {
+      const defaults = [
+        { name: 'John Doe', role: 'Teacher', department: 'Mathematics', status: 'Full-time', salary: 50000 },
+        { name: 'Jane Smith', role: 'Admin', department: 'Administration', status: 'Full-time', salary: 45000 },
+        { name: 'Mike Johnson', role: 'Janitor', department: 'Maintenance', status: 'Part-time', salary: 30000 },
+        { name: 'Emily Brown', role: 'Intern', department: 'IT', status: 'Temporary', salary: 25000 },
+      ];
+
+      seedStaff(defaults).catch((error) => {
+        console.error('Failed to seed staff', error);
+      });
+    }
+  }, [employees, isLoadingStaff, seedStaff]);
+
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -19,26 +35,21 @@ const EmployeeManagement = () => {
     setSearchTerm(e.target.value);
   }, []);
 
-  const handleAddEmployee = (employeeData) => {
-    // Logic to add the new employee to your state or send to an API
-    console.log('New employee data:', employeeData);
-    // Close the modal after saving
+  const handleAddEmployee = useCallback(async (employeeData) => {
+    await addStaffMutation.mutateAsync({ ...employeeData, syncStatus: 'pending' });
     setIsAddModalOpen(false);
-  };
+  }, [addStaffMutation]);
 
   const handleEditEmployee = useCallback((id) => {
-    // Implement edit employee logic
-    console.log('Edit employee', id);
+    toast('Edit employee functionality not implemented yet', { icon: '✏️' });
   }, []);
 
-  const handleDeleteEmployee = useCallback((id) => {
-    // Implement delete employee logic
-    setEmployees(prevEmployees => prevEmployees.filter(emp => emp.id !== id));
-  }, []);
+  const handleDeleteEmployee = useCallback(async (id) => {
+    await deleteStaffMutation.mutateAsync(id);
+  }, [deleteStaffMutation]);
 
   const handleExport = useCallback(() => {
-    // Implement export logic
-    console.log('Export data');
+    toast('Export feature not implemented yet', { icon: '📄' });
   }, []);
 
   const handleDepartmentChange = useCallback((e) => {

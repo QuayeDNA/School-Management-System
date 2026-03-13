@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/react';
 import { FiUser, FiBook, FiCalendar, FiMail, FiBell, FiShield } from 'react-icons/fi';
 import GeneralSettings from '../../components/admin/GeneralSettings';
 import AcademicSettings from '../../components/admin/AcademicSettings';
@@ -21,9 +21,9 @@ const Settings = () => {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Settings</h1>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+          <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
             <div className="sm:flex">
-              <Tab.List className="sm:w-64 bg-gray-50 p-4 sm:p-6 space-y-2">
+              <TabList className="sm:w-64 bg-gray-50 p-4 sm:p-6 space-y-2">
                 {tabs.map((tab) => (
                   <Tab
                     key={tab.name}
@@ -47,16 +47,16 @@ const Settings = () => {
                     )}
                   </Tab>
                 ))}
-              </Tab.List>
-              <Tab.Panels className="flex-1 p-4 sm:p-6">
+              </TabList>
+              <TabPanels className="flex-1 p-4 sm:p-6">
                 {tabs.map((tab, idx) => (
-                  <Tab.Panel key={idx}>
+                  <TabPanel key={idx}>
                     <tab.component />
-                  </Tab.Panel>
+                  </TabPanel>
                 ))}
-              </Tab.Panels>
+              </TabPanels>
             </div>
-          </Tab.Group>
+          </TabGroup>
         </div>
       </div>
     </div>
